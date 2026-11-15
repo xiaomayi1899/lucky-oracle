@@ -1,5 +1,5 @@
 /* 数理投票 Service Worker：应用壳离线可用，开奖数据网络优先 */
-const VERSION = "2026.11.15.2";
+const VERSION = "2026.11.15.3";
 const SHELL_CACHE = `shell-${VERSION}`;
 const DATA_CACHE = `data-${VERSION}`;
 
@@ -9,6 +9,7 @@ const SHELL_ASSETS = [
   "./assets/style.css",
   "./assets/core.js",
   "./assets/clusters.js",
+  "./assets/crowd.js",
   "./assets/schools.js",
   "./assets/models-ssq.js",
   "./assets/models-dlt.js",

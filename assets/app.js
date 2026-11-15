@@ -231,6 +231,27 @@
         "<span>距下期开奖 <b id=\"countdown\">" + esc(left) + "</b>（" + esc(dowName(g.schedule.days)) + " 21:" + two(g.schedule.minute) + "）</span></div>";
   }
 
+  /* 基于真实销量与一等奖注数的拥挤度估算 */
+  function crowdInfo(gid, nums) {
+    var M = window.OracleCrowd && window.OracleCrowd[gid];
+    if (!M || !nums || !nums.length) return null;
+    var small = 0;
+    for (var i = 0; i < nums.length; i++) if (nums[i] <= M.smallCut) small++;
+    var row = M.bySmall[String(small)] || null;
+    var base = M.avgSales / 2 / M.combo;
+    return {
+      small: small, cut: M.smallCut,
+      crowd: row ? row.crowd : 1,
+      n: row ? row.n : 0,
+      avgN: row ? row.avgN : 0,
+      avgMoney: row ? row.avgMoney : M.avgMoney,
+      expected: row ? base * row.crowd : base,
+      base: base,
+      median: M.overall.median,
+      worst: M.worstCase,
+    };
+  }
+
   /* ---------- 渲染：推荐 ---------- */
   function ballHtml(n, votes, special, small) {
     return '<span class="ball' + (special ? " special" : "") + (small ? " small" : "") + '">' + n +
@@ -283,16 +304,16 @@
         fmtVote(rec.special.totalVotes) + " 票" : "") +
       "。票数相同按归一化总分排序。</div>";
 
-    if (rec.collision) {
-      var cr = rec.collision.risk, cb = rec.collision.baseline;
-      var sr = rec.collisionSpecial ? rec.collisionSpecial.risk : 0;
-      var sb = rec.collisionSpecial ? rec.collisionSpecial.baseline : 0;
-      var cls = cr <= cb ? "ok" : "warnc";
-      html += '<div class="riskline">撞号风险：' + esc(g.mainLabel) + ' <b class="' + cls + '">' +
-        (cr * 100).toFixed(1) + '%</b>（随机 ' + (cb * 100).toFixed(1) + '%）' +
-        (rec.special ? " · " + esc(g.specialLabel) + ' <b class="' + (sr <= sb ? "ok" : "warnc") + '">' +
-          (sr * 100).toFixed(1) + "%</b>（随机 " + (sb * 100).toFixed(1) + "%）" : "") +
-        '<small>低 = 少人买 = 中奖时少分摊，但不提高中奖率</small></div>';
+    var ci = crowdInfo(state.game, rec.main.primary);
+    if (ci) {
+      var cls = ci.crowd < 0.95 ? "ok" : (ci.crowd > 1.05 ? "warnc" : "");
+      html += '<div class="riskline">' +
+        "本注含 <b>" + ci.small + "</b> 个小号（≤" + ci.cut + "）。历史同形态 " + ci.n + " 期：平均 <b class=\"" +
+        cls + "\">" + ci.avgN + "</b> 注同时中奖，单注约 <b>" + (ci.avgMoney / 1e4).toFixed(0) +
+        " 万</b>（均匀基准 " + ci.base.toFixed(1) + " 注）" +
+        '<small>撞号只影响奖金分摊，不改变中奖率。极端案例：' + esc(ci.worst.issue) + " 期开出 " +
+        ci.worst.nums.map(function (n) { return two(n); }).join(" ") + "，" +
+        ci.worst.n + " 注同中（" + ci.worst.crowd + "×）。</small></div>";
     }
 
     html += '<div class="pick-actions">' +
