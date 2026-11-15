@@ -23,6 +23,7 @@
     backtestBusy: false,
     showAllVotes: false,
     weights: null,
+    track: null,
     optimizing: false,
     optResult: null,
     fetching: false,
@@ -621,6 +622,104 @@
     body.innerHTML = html;
   }
 
+  /* ---------- 实盘战绩 ---------- */
+  function loadTrack() {
+    fetch("data/track.json?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { if (j) { state.track = j; renderTrack(); } })
+      .catch(function () { renderTrack(); });
+  }
+
+  function trackStats(list) {
+    if (!list.length) return null;
+    var sum = 0, max = 0;
+    list.forEach(function (r) { sum += r.mainHit; if (r.mainHit > max) max = r.mainHit; });
+    return { n: list.length, avg: sum / list.length, max: max };
+  }
+
+  function renderTrack() {
+    var body = $("trackBody");
+    var meta = $("trackMeta");
+    if (!body) return;
+    var g = C.GAMES[state.game];
+    var t = state.track;
+    if (!t || !t.games || !t.games[state.game]) {
+      if (meta) meta.textContent = "—";
+      body.innerHTML = '<div class="muted">等待第一份记录…</div>';
+      return;
+    }
+    var b = t.games[state.game];
+    var records = (b.records || []).slice();
+    var fwd = records.filter(function (r) { return !r.backfilled; });
+    var back = records.filter(function (r) { return r.backfilled; });
+    var sf = trackStats(fwd), sb = trackStats(back);
+
+    if (meta) meta.textContent = fwd.length + " 期前瞻 · " + back.length + " 期回补";
+
+    var html = "";
+
+    /* 下期待开：开奖前就锁定 */
+    if (b.pending) {
+      var pn = b.pending;
+      html += '<div class="pending-box">' +
+        '<div class="pending-label">下期待开 ' + esc(pn.forIssue) + " · 已锁定</div>" +
+        '<div class="balls">' +
+          pn.pick.map(function (n) { return '<span class="ball small">' + two(n) + "</span>"; }).join("") +
+          (pn.special && pn.special.length ? '<span class="ball-split"></span>' +
+            pn.special.map(function (n) { return '<span class="ball small special">' + two(n) + "</span>"; }).join("") : "") +
+        "</div>" +
+        '<div class="pending-note">基于 ' + esc(pn.basedOnIssue) + " 期开奖后生成" +
+        (pn.generatedAt ? "（" + esc(fmtDateTime(pn.generatedAt)) + "）" : "") +
+        "。开奖后自动比对，写入下方的哈希链。</div>" +
+        "</div>";
+    }
+
+    /* 前瞻统计 */
+    if (sf) {
+      html += '<div class="bt-grid">' +
+        '<div class="bt-cell"><div class="v">' + sf.n + '</div><div class="k">前瞻记录</div></div>' +
+        '<div class="bt-cell"><div class="v">' + sf.avg.toFixed(2) + '</div><div class="k">平均命中</div></div>' +
+        '<div class="bt-cell"><div class="v">' + sf.max + '</div><div class="k">最好成绩</div></div>' +
+        "</div>";
+    } else {
+      html += '<div class="muted" style="margin-bottom:12px">还没有前瞻记录。' +
+        "从下一期（" + esc(b.pending ? b.pending.forIssue : "待开") + "）开始，每期开奖前锁定推荐，开奖后自动比对，累积成不可篡改的战绩。</div>";
+    }
+
+    /* 回补说明 */
+    if (sb) {
+      html += '<div class="muted" style="margin-bottom:10px">另有 ' + sb.n + " 期回补记录（部署前用历史数据回算，平均命中 " +
+        sb.avg.toFixed(2) + "，仅作参考，不计入前瞻战绩）。</div>";
+    }
+
+    /* 最近记录 */
+    if (records.length) {
+      html += '<div class="bt-rows">';
+      records.slice(0, 10).forEach(function (r) {
+        var nums = (r.actualMain || []).map(function (n) {
+          var hit = (r.pick || []).indexOf(n) >= 0;
+          return '<span class="mini' + (hit ? " on" : "") + '">' + two(n) + "</span>";
+        }).join("");
+        var sp = (r.actualSpecial || []).map(function (n) {
+          var hit = (r.special || []).indexOf(n) >= 0;
+          return '<span class="mini sp' + (hit ? " on" : "") + '">' + two(n) + "</span>";
+        }).join("");
+        html += '<div class="bt-row">' +
+          '<span class="iss">' + esc(String(r.issue).slice(-6)) +
+            (r.backfilled ? ' <span class="dim">回</span>' : "") + "</span>" +
+          '<span class="nums">' + nums + (sp ? " ｜ " + sp : "") + "</span>" +
+          '<span class="hit' + (r.mainHit === 0 ? " zero" : "") + '">中 ' + r.mainHit + "</span>" +
+          "</div>";
+      });
+      html += "</div>";
+    }
+
+    html += '<div class="track-chain">哈希链：' + esc(b.lastHash || "—") +
+      " · 每条记录包含前一条的哈希，改动任意一期都会断链</div>";
+
+    body.innerHTML = html;
+  }
+
   /* ---------- 权重优化 ---------- */
   var OPT_TRAIN = 100;
   var OPT_VALID = 50;
@@ -803,6 +902,7 @@
     renderVotes();
     renderSchools();
     renderTrend();
+    renderTrack();
     renderOpt();
     if (!state.backtest) renderBacktest();
     var g = C.GAMES[state.game];
@@ -828,7 +928,9 @@
     if (btn) btn.addEventListener("click", runBacktest);
 
     loadData();
+    loadTrack();
     setInterval(loadData, REFRESH_MS);
+    setInterval(loadTrack, REFRESH_MS);
     setInterval(function () {
       var cd = $("countdown");
       if (cd && state.nextDraw) cd.textContent = fmtLeft(state.nextDraw - Date.now());

@@ -333,3 +333,18 @@ body[data-game="dlt"] .wtag { background: rgba(226, 129, 42, .14); border-color:
 .riskline b.ok { color: var(--ok); }
 .riskline b.warnc { color: var(--warn); }
 .riskline small { display: block; font-size: 10.5px; color: var(--dim); margin-top: 2px; }
+
+/* 实盘战绩 */
+.pending-box {
+  margin-bottom: 12px; padding: 12px;
+  background: rgba(46, 204, 143, .06);
+  border: 1px solid rgba(46, 204, 143, .22);
+  border-radius: 12px;
+}
+.pending-label { font-size: 11px; font-weight: 700; color: var(--ok); letter-spacing: .5px; margin-bottom: 9px; }
+.pending-note { font-size: 10.5px; color: var(--muted); margin-top: 9px; line-height: 1.6; }
+.track-chain {
+  margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line);
+  font-size: 10px; color: var(--dim); font-family: ui-monospace, Menlo, Consolas, monospace;
+  word-break: break-all;
+}

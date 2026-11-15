@@ -35,15 +35,23 @@ jobs:
       - name: Fetch latest lottery data
         run: python scripts/fetch_data.py
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Record forward-test recommendations
+        run: node scripts/track.js
+
       - name: Commit data changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet -- data/lottery.json; then
+          if git diff --quiet -- data/lottery.json data/track.json; then
             echo "开奖数据无变化"
           else
-            git add data/lottery.json
-            git commit -m "chore(data): refresh lottery draws [skip ci]"
+            git add data/lottery.json data/track.json
+            git commit -m "chore(data): refresh draws and forward-test record [skip ci]"
             git push
           fi
 

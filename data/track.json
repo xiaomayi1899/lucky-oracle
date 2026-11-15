@@ -1,0 +1,2718 @@
+{
+ "version": 1,
+ "updated": "2026-11-15T14:43:38.275Z",
+ "games": {
+  "ssq": {
+   "records": [
+    {
+     "issue": "2026131",
+     "date": "2026-11-15",
+     "pick": [
+      1,
+      4,
+      8,
+      14,
+      24,
+      30
+     ],
+     "special": [
+      2
+     ],
+     "alt": [
+      2,
+      4,
+      6,
+      14,
+      24,
+      30
+     ],
+     "altSpecial": [
+      13
+     ],
+     "actualMain": [
+      1,
+      10,
+      19,
+      26,
+      31,
+      33
+     ],
+     "actualSpecial": [
+      15
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.600Z",
+     "backfilled": true,
+     "prevHash": "d7196de937767caf",
+     "hash": "fd26e69e91e87363"
+    },
+    {
+     "issue": "2026130",
+     "date": "2026-11-12",
+     "pick": [
+      4,
+      8,
+      9,
+      14,
+      24,
+      30
+     ],
+     "special": [
+      1
+     ],
+     "alt": [
+      3,
+      9,
+      10,
+      14,
+      24,
+      30
+     ],
+     "altSpecial": [
+      11
+     ],
+     "actualMain": [
+      1,
+      2,
+      6,
+      16,
+      20,
+      28
+     ],
+     "actualSpecial": [
+      2
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.613Z",
+     "backfilled": true,
+     "prevHash": "637cfeef10759b5f",
+     "hash": "d7196de937767caf"
+    },
+    {
+     "issue": "2026129",
+     "date": "2026-11-10",
+     "pick": [
+      4,
+      6,
+      10,
+      14,
+      24,
+      30
+     ],
+     "special": [
+      1
+     ],
+     "alt": [
+      3,
+      4,
+      5,
+      6,
+      14,
+      30
+     ],
+     "altSpecial": [
+      2
+     ],
+     "actualMain": [
+      3,
+      9,
+      16,
+      20,
+      25,
+      30
+     ],
+     "actualSpecial": [
+      5
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.627Z",
+     "backfilled": true,
+     "prevHash": "a4fb55f51a676123",
+     "hash": "637cfeef10759b5f"
+    },
+    {
+     "issue": "2026128",
+     "date": "2026-11-08",
+     "pick": [
+      2,
+      8,
+      13,
+      14,
+      24,
+      29
+     ],
+     "special": [
+      1
+     ],
+     "alt": [
+      4,
+      13,
+      14,
+      24,
+      29,
+      30
+     ],
+     "altSpecial": [
+      2
+     ],
+     "actualMain": [
+      5,
+      6,
+      10,
+      25,
+      27,
+      30
+     ],
+     "actualSpecial": [
+      11
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.636Z",
+     "backfilled": true,
+     "prevHash": "c2b812d71ac7c7bd",
+     "hash": "a4fb55f51a676123"
+    },
+    {
+     "issue": "2026127",
+     "date": "2026-11-05",
+     "pick": [
+      4,
+      9,
+      10,
+      14,
+      22,
+      24
+     ],
+     "special": [
+      1
+     ],
+     "alt": [
+      4,
+      8,
+      10,
+      22,
+      24,
+      30
+     ],
+     "altSpecial": [
+      4
+     ],
+     "actualMain": [
+      13,
+      14,
+      19,
+      25,
+      29,
+      32
+     ],
+     "actualSpecial": [
+      12
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.644Z",
+     "backfilled": true,
+     "prevHash": "326b27df4c919454",
+     "hash": "c2b812d71ac7c7bd"
+    },
+    {
+     "issue": "2026126",
+     "date": "2026-11-03",
+     "pick": [
+      4,
+      14,
+      24,
+      26,
+      30,
+      32
+     ],
+     "special": [
+      1
+     ],
+     "alt": [
+      4,
+      6,
+      8,
+      24,
+      26,
+      30
+     ],
+     "altSpecial": [
+      2
+     ],
+     "actualMain": [
+      9,
+      10,
+      13,
+      22,
+      29,
+      32
+     ],
+     "actualSpecial": [
+      12
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.652Z",
+     "backfilled": true,
+     "prevHash": "11008d67a900b31b",
+     "hash": "326b27df4c919454"
+    },
+    {
+     "issue": "2026125",
+     "date": "2026-11-01",
+     "pick": [
+      2,
+      4,
+      6,
+      14,
+      24,
+      30
+     ],
+     "special": [
+      1
+     ],
+     "alt": [
+      3,
+      4,
+      6,
+      14,
+      24,
+      32
+     ],
+     "altSpecial": [
+      2
+     ],
+     "actualMain": [
+      4,
+      6,
+      10,
+      15,
+      26,
+      27
+     ],
+     "actualSpecial": [
+      11
+     ],
+     "mainHit": 2,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.659Z",
+     "backfilled": true,
+     "prevHash": "5fd3b97790399143",
+     "hash": "11008d67a900b31b"
+    },
+    {
+     "issue": "2026124",
+     "date": "2026-10-29",
+     "pick": [
+      2,
+      4,
+      14,
+      20,
+      24,
+      30
+     ],
+     "special": [
+      1
+     ],
+     "alt": [
+      4,
+      5,
+      13,
+      14,
+      24,
+      30
+     ],
+     "altSpecial": [
+      2
+     ],
+     "actualMain": [
+      3,
+      11,
+      17,
+      22,
+      23,
+      29
+     ],
+     "actualSpecial": [
+      9
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.669Z",
+     "backfilled": true,
+     "prevHash": "9815b8428d7ac4a8",
+     "hash": "5fd3b97790399143"
+    },
+    {
+     "issue": "2026123",
+     "date": "2026-10-27",
+     "pick": [
+      1,
+      2,
+      4,
+      14,
+      24,
+      30
+     ],
+     "special": [
+      1
+     ],
+     "alt": [
+      2,
+      3,
+      14,
+      18,
+      24,
+      30
+     ],
+     "altSpecial": [
+      2
+     ],
+     "actualMain": [
+      4,
+      5,
+      20,
+      21,
+      26,
+      30
+     ],
+     "actualSpecial": [
+      12
+     ],
+     "mainHit": 2,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.675Z",
+     "backfilled": true,
+     "prevHash": "f22d006d681e635a",
+     "hash": "9815b8428d7ac4a8"
+    },
+    {
+     "issue": "2026122",
+     "date": "2026-10-25",
+     "pick": [
+      2,
+      4,
+      6,
+      14,
+      22,
+      24
+     ],
+     "special": [
+      2
+     ],
+     "alt": [
+      2,
+      4,
+      8,
+      14,
+      24,
+      32
+     ],
+     "altSpecial": [
+      1
+     ],
+     "actualMain": [
+      1,
+      2,
+      4,
+      17,
+      19,
+      30
+     ],
+     "actualSpecial": [
+      9
+     ],
+     "mainHit": 2,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.684Z",
+     "backfilled": true,
+     "prevHash": "1fb4c76ae6095151",
+     "hash": "f22d006d681e635a"
+    },
+    {
+     "issue": "2026121",
+     "date": "2026-10-22",
+     "pick": [
+      2,
+      3,
+      14,
+      18,
+      22,
+      24
+     ],
+     "special": [
+      3
+     ],
+     "alt": [
+      2,
+      4,
+      9,
+      14,
+      18,
+      24
+     ],
+     "altSpecial": [
+      1
+     ],
+     "actualMain": [
+      2,
+      7,
+      20,
+      24,
+      26,
+      30
+     ],
+     "actualSpecial": [
+      2
+     ],
+     "mainHit": 2,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.692Z",
+     "backfilled": true,
+     "prevHash": "ed4c0a1aa0cc86e9",
+     "hash": "1fb4c76ae6095151"
+    },
+    {
+     "issue": "2026120",
+     "date": "2026-10-20",
+     "pick": [
+      3,
+      4,
+      13,
+      14,
+      22,
+      24
+     ],
+     "special": [
+      1
+     ],
+     "alt": [
+      4,
+      9,
+      14,
+      22,
+      23,
+      24
+     ],
+     "altSpecial": [
+      4
+     ],
+     "actualMain": [
+      13,
+      14,
+      16,
+      18,
+      20,
+      31
+     ],
+     "actualSpecial": [
+      3
+     ],
+     "mainHit": 2,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.700Z",
+     "backfilled": true,
+     "prevHash": "7635b2693168a235",
+     "hash": "ed4c0a1aa0cc86e9"
+    },
+    {
+     "issue": "2026119",
+     "date": "2026-10-18",
+     "pick": [
+      2,
+      3,
+      4,
+      14,
+      22,
+      24
+     ],
+     "special": [
+      14
+     ],
+     "alt": [
+      4,
+      6,
+      14,
+      22,
+      24,
+      30
+     ],
+     "altSpecial": [
+      1
+     ],
+     "actualMain": [
+      12,
+      22,
+      23,
+      25,
+      27,
+      30
+     ],
+     "actualSpecial": [
+      4
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.706Z",
+     "backfilled": true,
+     "prevHash": "fb22fe41e73184e9",
+     "hash": "7635b2693168a235"
+    },
+    {
+     "issue": "2026118",
+     "date": "2026-10-15",
+     "pick": [
+      2,
+      3,
+      4,
+      14,
+      24,
+      26
+     ],
+     "special": [
+      1
+     ],
+     "alt": [
+      3,
+      4,
+      8,
+      14,
+      19,
+      24
+     ],
+     "altSpecial": [
+      2
+     ],
+     "actualMain": [
+      5,
+      21,
+      22,
+      23,
+      28,
+      31
+     ],
+     "actualSpecial": [
+      14
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.712Z",
+     "backfilled": true,
+     "prevHash": "e33f783013833cf8",
+     "hash": "fb22fe41e73184e9"
+    },
+    {
+     "issue": "2026117",
+     "date": "2026-10-13",
+     "pick": [
+      1,
+      4,
+      14,
+      18,
+      24,
+      26
+     ],
+     "special": [
+      1
+     ],
+     "alt": [
+      2,
+      4,
+      14,
+      18,
+      24,
+      25
+     ],
+     "altSpecial": [
+      2
+     ],
+     "actualMain": [
+      4,
+      11,
+      14,
+      22,
+      26,
+      27
+     ],
+     "actualSpecial": [
+      4
+     ],
+     "mainHit": 3,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.721Z",
+     "backfilled": true,
+     "prevHash": "7b97ee9739ec7a5a",
+     "hash": "e33f783013833cf8"
+    },
+    {
+     "issue": "2026116",
+     "date": "2026-10-11",
+     "pick": [
+      4,
+      14,
+      18,
+      24,
+      26,
+      32
+     ],
+     "special": [
+      3
+     ],
+     "alt": [
+      2,
+      3,
+      4,
+      14,
+      24,
+      32
+     ],
+     "altSpecial": [
+      1
+     ],
+     "actualMain": [
+      10,
+      19,
+      24,
+      27,
+      28,
+      33
+     ],
+     "actualSpecial": [
+      12
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.731Z",
+     "backfilled": true,
+     "prevHash": "15385f8e4636c4dd",
+     "hash": "7b97ee9739ec7a5a"
+    },
+    {
+     "issue": "2026115",
+     "date": "2026-10-08",
+     "pick": [
+      4,
+      6,
+      14,
+      24,
+      29,
+      30
+     ],
+     "special": [
+      11
+     ],
+     "alt": [
+      4,
+      6,
+      8,
+      18,
+      24,
+      30
+     ],
+     "altSpecial": [
+      1
+     ],
+     "actualMain": [
+      4,
+      13,
+      14,
+      18,
+      22,
+      24
+     ],
+     "actualSpecial": [
+      3
+     ],
+     "mainHit": 3,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.739Z",
+     "backfilled": true,
+     "prevHash": "150828fb07f62f74",
+     "hash": "15385f8e4636c4dd"
+    },
+    {
+     "issue": "2026114",
+     "date": "2026-10-06",
+     "pick": [
+      2,
+      3,
+      4,
+      13,
+      14,
+      30
+     ],
+     "special": [
+      2
+     ],
+     "alt": [
+      3,
+      4,
+      6,
+      14,
+      24,
+      30
+     ],
+     "altSpecial": [
+      11
+     ],
+     "actualMain": [
+      7,
+      18,
+      23,
+      24,
+      29,
+      31
+     ],
+     "actualSpecial": [
+      10
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.746Z",
+     "backfilled": true,
+     "prevHash": "7782ea6bb6cc0e0d",
+     "hash": "150828fb07f62f74"
+    },
+    {
+     "issue": "2026113",
+     "date": "2026-09-29",
+     "pick": [
+      11,
+      13,
+      14,
+      24,
+      30,
+      32
+     ],
+     "special": [
+      1
+     ],
+     "alt": [
+      5,
+      6,
+      11,
+      13,
+      14,
+      24
+     ],
+     "altSpecial": [
+      2
+     ],
+     "actualMain": [
+      3,
+      4,
+      20,
+      24,
+      29,
+      30
+     ],
+     "actualSpecial": [
+      11
+     ],
+     "mainHit": 2,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.753Z",
+     "backfilled": true,
+     "prevHash": "ee1b07f5dcb3a586",
+     "hash": "7782ea6bb6cc0e0d"
+    },
+    {
+     "issue": "2026112",
+     "date": "2026-09-27",
+     "pick": [
+      2,
+      3,
+      5,
+      6,
+      13,
+      24
+     ],
+     "special": [
+      1
+     ],
+     "alt": [
+      5,
+      6,
+      13,
+      14,
+      24,
+      30
+     ],
+     "altSpecial": [
+      3
+     ],
+     "actualMain": [
+      1,
+      4,
+      11,
+      12,
+      17,
+      29
+     ],
+     "actualSpecial": [
+      11
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.760Z",
+     "backfilled": true,
+     "prevHash": "806644daa73091c8",
+     "hash": "ee1b07f5dcb3a586"
+    },
+    {
+     "issue": "2026111",
+     "date": "2026-09-24",
+     "pick": [
+      2,
+      3,
+      13,
+      14,
+      24,
+      30
+     ],
+     "special": [
+      1
+     ],
+     "alt": [
+      2,
+      3,
+      6,
+      13,
+      15,
+      24
+     ],
+     "altSpecial": [
+      10
+     ],
+     "actualMain": [
+      6,
+      7,
+      14,
+      22,
+      31,
+      32
+     ],
+     "actualSpecial": [
+      5
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.769Z",
+     "backfilled": true,
+     "prevHash": "6caa988d8b2c9a27",
+     "hash": "806644daa73091c8"
+    },
+    {
+     "issue": "2026110",
+     "date": "2026-09-22",
+     "pick": [
+      3,
+      9,
+      13,
+      14,
+      24,
+      30
+     ],
+     "special": [
+      4
+     ],
+     "alt": [
+      2,
+      6,
+      13,
+      14,
+      24,
+      30
+     ],
+     "altSpecial": [
+      1
+     ],
+     "actualMain": [
+      2,
+      5,
+      16,
+      19,
+      26,
+      32
+     ],
+     "actualSpecial": [
+      14
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.776Z",
+     "backfilled": true,
+     "prevHash": "b6428f18d3b7cda6",
+     "hash": "6caa988d8b2c9a27"
+    },
+    {
+     "issue": "2026109",
+     "date": "2026-09-20",
+     "pick": [
+      4,
+      6,
+      13,
+      14,
+      24,
+      26
+     ],
+     "special": [
+      1
+     ],
+     "alt": [
+      6,
+      11,
+      13,
+      14,
+      20,
+      24
+     ],
+     "altSpecial": [
+      4
+     ],
+     "actualMain": [
+      9,
+      12,
+      15,
+      26,
+      30,
+      33
+     ],
+     "actualSpecial": [
+      6
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.784Z",
+     "backfilled": true,
+     "prevHash": "20c1f200a56132ac",
+     "hash": "b6428f18d3b7cda6"
+    },
+    {
+     "issue": "2026108",
+     "date": "2026-09-17",
+     "pick": [
+      4,
+      6,
+      13,
+      14,
+      24,
+      30
+     ],
+     "special": [
+      10
+     ],
+     "alt": [
+      1,
+      4,
+      13,
+      15,
+      24,
+      30
+     ],
+     "altSpecial": [
+      1
+     ],
+     "actualMain": [
+      6,
+      11,
+      13,
+      14,
+      20,
+      28
+     ],
+     "actualSpecial": [
+      16
+     ],
+     "mainHit": 3,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.790Z",
+     "backfilled": true,
+     "prevHash": "daf1964c447e9a9e",
+     "hash": "20c1f200a56132ac"
+    },
+    {
+     "issue": "2026107",
+     "date": "2026-09-15",
+     "pick": [
+      4,
+      6,
+      13,
+      24,
+      30,
+      32
+     ],
+     "special": [
+      10
+     ],
+     "alt": [
+      4,
+      5,
+      13,
+      14,
+      24,
+      30
+     ],
+     "altSpecial": [
+      2
+     ],
+     "actualMain": [
+      1,
+      5,
+      9,
+      17,
+      24,
+      33
+     ],
+     "actualSpecial": [
+      4
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.796Z",
+     "backfilled": true,
+     "prevHash": "6c7237585723b4b3",
+     "hash": "daf1964c447e9a9e"
+    },
+    {
+     "issue": "2026106",
+     "date": "2026-09-13",
+     "pick": [
+      2,
+      4,
+      13,
+      24,
+      30,
+      32
+     ],
+     "special": [
+      2
+     ],
+     "alt": [
+      3,
+      4,
+      6,
+      13,
+      24,
+      30
+     ],
+     "altSpecial": [
+      1
+     ],
+     "actualMain": [
+      6,
+      11,
+      13,
+      14,
+      22,
+      30
+     ],
+     "actualSpecial": [
+      14
+     ],
+     "mainHit": 2,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.806Z",
+     "backfilled": true,
+     "prevHash": "78d5827dc5aa0bd4",
+     "hash": "6c7237585723b4b3"
+    },
+    {
+     "issue": "2026105",
+     "date": "2026-09-10",
+     "pick": [
+      2,
+      4,
+      6,
+      13,
+      24,
+      25
+     ],
+     "special": [
+      3
+     ],
+     "alt": [
+      4,
+      6,
+      12,
+      13,
+      14,
+      24
+     ],
+     "altSpecial": [
+      2
+     ],
+     "actualMain": [
+      2,
+      4,
+      13,
+      14,
+      15,
+      30
+     ],
+     "actualSpecial": [
+      8
+     ],
+     "mainHit": 3,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.813Z",
+     "backfilled": true,
+     "prevHash": "2bb8ba8901490921",
+     "hash": "78d5827dc5aa0bd4"
+    },
+    {
+     "issue": "2026104",
+     "date": "2026-09-08",
+     "pick": [
+      4,
+      6,
+      13,
+      14,
+      24,
+      25
+     ],
+     "special": [
+      1
+     ],
+     "alt": [
+      3,
+      4,
+      6,
+      24,
+      25,
+      30
+     ],
+     "altSpecial": [
+      2
+     ],
+     "actualMain": [
+      11,
+      12,
+      13,
+      19,
+      20,
+      31
+     ],
+     "actualSpecial": [
+      3
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.821Z",
+     "backfilled": true,
+     "prevHash": "6407f7a0841cc9d7",
+     "hash": "2bb8ba8901490921"
+    },
+    {
+     "issue": "2026103",
+     "date": "2026-09-06",
+     "pick": [
+      3,
+      4,
+      6,
+      14,
+      24,
+      25
+     ],
+     "special": [
+      2
+     ],
+     "alt": [
+      2,
+      3,
+      4,
+      24,
+      25,
+      32
+     ],
+     "altSpecial": [
+      1
+     ],
+     "actualMain": [
+      4,
+      11,
+      20,
+      27,
+      28,
+      30
+     ],
+     "actualSpecial": [
+      15
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.828Z",
+     "backfilled": true,
+     "prevHash": "d33c69451720b330",
+     "hash": "6407f7a0841cc9d7"
+    },
+    {
+     "issue": "2026102",
+     "date": "2026-09-03",
+     "pick": [
+      2,
+      5,
+      6,
+      14,
+      24,
+      25
+     ],
+     "special": [
+      13
+     ],
+     "alt": [
+      5,
+      6,
+      9,
+      24,
+      25,
+      32
+     ],
+     "altSpecial": [
+      2
+     ],
+     "actualMain": [
+      3,
+      4,
+      10,
+      13,
+      16,
+      25
+     ],
+     "actualSpecial": [
+      9
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.839Z",
+     "backfilled": true,
+     "prevHash": "",
+     "hash": "d33c69451720b330"
+    }
+   ],
+   "pending": {
+    "pick": [
+     4,
+     10,
+     13,
+     14,
+     24,
+     30
+    ],
+    "special": [
+     2
+    ],
+    "alt": [
+     1,
+     4,
+     10,
+     24,
+     30,
+     32
+    ],
+    "altSpecial": [
+     1
+    ],
+    "votes": {},
+    "models": 72,
+    "clusters": 43,
+    "forIssue": "2026132",
+    "basedOnIssue": "2026131",
+    "generatedAt": "2026-11-15T14:43:37.860Z"
+   },
+   "lastHash": "fd26e69e91e87363",
+   "updated": "2026-11-15T14:43:37.861Z"
+  },
+  "dlt": {
+   "records": [
+    {
+     "issue": "26130",
+     "date": "2026-11-14",
+     "pick": [
+      6,
+      12,
+      14,
+      25,
+      34
+     ],
+     "special": [
+      7,
+      12
+     ],
+     "alt": [
+      2,
+      12,
+      14,
+      17,
+      34
+     ],
+     "altSpecial": [
+      9,
+      12
+     ],
+     "actualMain": [
+      1,
+      7,
+      11,
+      27,
+      29
+     ],
+     "actualSpecial": [
+      2,
+      6
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.880Z",
+     "backfilled": true,
+     "prevHash": "e8ec10d0044d3406",
+     "hash": "5e70be57b9c9f662"
+    },
+    {
+     "issue": "26129",
+     "date": "2026-11-11",
+     "pick": [
+      6,
+      13,
+      14,
+      25,
+      34
+     ],
+     "special": [
+      9,
+      12
+     ],
+     "alt": [
+      3,
+      6,
+      14,
+      26,
+      34
+     ],
+     "altSpecial": [
+      7,
+      9
+     ],
+     "actualMain": [
+      2,
+      12,
+      14,
+      17,
+      33
+     ],
+     "actualSpecial": [
+      7,
+      8
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.898Z",
+     "backfilled": true,
+     "prevHash": "585f17c2c59e65b6",
+     "hash": "e8ec10d0044d3406"
+    },
+    {
+     "issue": "26128",
+     "date": "2026-11-09",
+     "pick": [
+      5,
+      6,
+      13,
+      14,
+      18
+     ],
+     "special": [
+      4,
+      12
+     ],
+     "alt": [
+      6,
+      10,
+      14,
+      17,
+      18
+     ],
+     "altSpecial": [
+      2,
+      12
+     ],
+     "actualMain": [
+      3,
+      13,
+      20,
+      25,
+      34
+     ],
+     "actualSpecial": [
+      9,
+      12
+     ],
+     "mainHit": 1,
+     "specialHit": 1,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.910Z",
+     "backfilled": true,
+     "prevHash": "3eaa93bb8e4acaa1",
+     "hash": "585f17c2c59e65b6"
+    },
+    {
+     "issue": "26127",
+     "date": "2026-11-07",
+     "pick": [
+      12,
+      13,
+      14,
+      25,
+      34
+     ],
+     "special": [
+      4,
+      7
+     ],
+     "alt": [
+      10,
+      12,
+      13,
+      14,
+      19
+     ],
+     "altSpecial": [
+      3,
+      4
+     ],
+     "actualMain": [
+      5,
+      6,
+      17,
+      18,
+      27
+     ],
+     "actualSpecial": [
+      3,
+      12
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.926Z",
+     "backfilled": true,
+     "prevHash": "4acb475b5a0e9fae",
+     "hash": "3eaa93bb8e4acaa1"
+    },
+    {
+     "issue": "26126",
+     "date": "2026-11-04",
+     "pick": [
+      10,
+      12,
+      13,
+      14,
+      34
+     ],
+     "special": [
+      1,
+      9
+     ],
+     "alt": [
+      12,
+      13,
+      18,
+      19,
+      34
+     ],
+     "altSpecial": [
+      1,
+      12
+     ],
+     "actualMain": [
+      5,
+      11,
+      17,
+      25,
+      34
+     ],
+     "actualSpecial": [
+      4,
+      6
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.942Z",
+     "backfilled": true,
+     "prevHash": "36b1196ec59e4888",
+     "hash": "4acb475b5a0e9fae"
+    },
+    {
+     "issue": "26125",
+     "date": "2026-11-02",
+     "pick": [
+      6,
+      10,
+      14,
+      18,
+      19
+     ],
+     "special": [
+      1,
+      9
+     ],
+     "alt": [
+      3,
+      10,
+      14,
+      18,
+      34
+     ],
+     "altSpecial": [
+      2,
+      9
+     ],
+     "actualMain": [
+      12,
+      13,
+      23,
+      25,
+      29
+     ],
+     "actualSpecial": [
+      7,
+      10
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.954Z",
+     "backfilled": true,
+     "prevHash": "054e8cb12979bf90",
+     "hash": "36b1196ec59e4888"
+    },
+    {
+     "issue": "26124",
+     "date": "2026-10-31",
+     "pick": [
+      6,
+      10,
+      14,
+      19,
+      24
+     ],
+     "special": [
+      9,
+      12
+     ],
+     "alt": [
+      6,
+      10,
+      14,
+      23,
+      32
+     ],
+     "altSpecial": [
+      2,
+      12
+     ],
+     "actualMain": [
+      12,
+      14,
+      18,
+      22,
+      27
+     ],
+     "actualSpecial": [
+      1,
+      9
+     ],
+     "mainHit": 1,
+     "specialHit": 1,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.969Z",
+     "backfilled": true,
+     "prevHash": "a863c8b169248332",
+     "hash": "054e8cb12979bf90"
+    },
+    {
+     "issue": "26123",
+     "date": "2026-10-28",
+     "pick": [
+      2,
+      6,
+      10,
+      14,
+      32
+     ],
+     "special": [
+      1,
+      12
+     ],
+     "alt": [
+      10,
+      14,
+      23,
+      32,
+      34
+     ],
+     "altSpecial": [
+      11,
+      12
+     ],
+     "actualMain": [
+      13,
+      18,
+      19,
+      20,
+      28
+     ],
+     "actualSpecial": [
+      9,
+      11
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.984Z",
+     "backfilled": true,
+     "prevHash": "39ae9110d0d7ea13",
+     "hash": "a863c8b169248332"
+    },
+    {
+     "issue": "26122",
+     "date": "2026-10-26",
+     "pick": [
+      3,
+      6,
+      10,
+      14,
+      32
+     ],
+     "special": [
+      1,
+      9
+     ],
+     "alt": [
+      6,
+      7,
+      10,
+      13,
+      14
+     ],
+     "altSpecial": [
+      1,
+      2
+     ],
+     "actualMain": [
+      2,
+      14,
+      21,
+      22,
+      24
+     ],
+     "actualSpecial": [
+      2,
+      12
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:37.998Z",
+     "backfilled": true,
+     "prevHash": "6fd86e71924b384a",
+     "hash": "39ae9110d0d7ea13"
+    },
+    {
+     "issue": "26121",
+     "date": "2026-10-24",
+     "pick": [
+      6,
+      10,
+      13,
+      14,
+      32
+     ],
+     "special": [
+      4,
+      12
+     ],
+     "alt": [
+      3,
+      6,
+      10,
+      14,
+      23
+     ],
+     "altSpecial": [
+      4,
+      11
+     ],
+     "actualMain": [
+      6,
+      8,
+      19,
+      24,
+      25
+     ],
+     "actualSpecial": [
+      1,
+      8
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.009Z",
+     "backfilled": true,
+     "prevHash": "8e35a5c1624f3c55",
+     "hash": "6fd86e71924b384a"
+    },
+    {
+     "issue": "26120",
+     "date": "2026-10-21",
+     "pick": [
+      3,
+      9,
+      10,
+      14,
+      23
+     ],
+     "special": [
+      5,
+      7
+     ],
+     "alt": [
+      3,
+      10,
+      14,
+      26,
+      32
+     ],
+     "altSpecial": [
+      5,
+      12
+     ],
+     "actualMain": [
+      1,
+      6,
+      10,
+      15,
+      32
+     ],
+     "actualSpecial": [
+      3,
+      4
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.020Z",
+     "backfilled": true,
+     "prevHash": "2c770233d2461f9c",
+     "hash": "8e35a5c1624f3c55"
+    },
+    {
+     "issue": "26119",
+     "date": "2026-10-19",
+     "pick": [
+      9,
+      10,
+      12,
+      14,
+      26
+     ],
+     "special": [
+      7,
+      12
+     ],
+     "alt": [
+      2,
+      10,
+      12,
+      14,
+      23
+     ],
+     "altSpecial": [
+      5,
+      12
+     ],
+     "actualMain": [
+      3,
+      6,
+      20,
+      24,
+      32
+     ],
+     "actualSpecial": [
+      4,
+      7
+     ],
+     "mainHit": 0,
+     "specialHit": 1,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.033Z",
+     "backfilled": true,
+     "prevHash": "2216ecd37aa6fec6",
+     "hash": "2c770233d2461f9c"
+    },
+    {
+     "issue": "26118",
+     "date": "2026-10-17",
+     "pick": [
+      3,
+      10,
+      12,
+      14,
+      34
+     ],
+     "special": [
+      1,
+      12
+     ],
+     "alt": [
+      10,
+      12,
+      14,
+      23,
+      35
+     ],
+     "altSpecial": [
+      1,
+      7
+     ],
+     "actualMain": [
+      2,
+      9,
+      21,
+      26,
+      32
+     ],
+     "actualSpecial": [
+      6,
+      12
+     ],
+     "mainHit": 0,
+     "specialHit": 1,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.044Z",
+     "backfilled": true,
+     "prevHash": "089ab1574ae6dd4c",
+     "hash": "2216ecd37aa6fec6"
+    },
+    {
+     "issue": "26117",
+     "date": "2026-10-14",
+     "pick": [
+      10,
+      12,
+      13,
+      14,
+      34
+     ],
+     "special": [
+      1,
+      2
+     ],
+     "alt": [
+      10,
+      12,
+      14,
+      19,
+      35
+     ],
+     "altSpecial": [
+      1,
+      7
+     ],
+     "actualMain": [
+      4,
+      13,
+      19,
+      29,
+      31
+     ],
+     "actualSpecial": [
+      2,
+      12
+     ],
+     "mainHit": 1,
+     "specialHit": 1,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.056Z",
+     "backfilled": true,
+     "prevHash": "069c1bcb812a1d3c",
+     "hash": "089ab1574ae6dd4c"
+    },
+    {
+     "issue": "26116",
+     "date": "2026-10-12",
+     "pick": [
+      10,
+      12,
+      13,
+      14,
+      34
+     ],
+     "special": [
+      7,
+      12
+     ],
+     "alt": [
+      10,
+      12,
+      14,
+      24,
+      26
+     ],
+     "altSpecial": [
+      7,
+      9
+     ],
+     "actualMain": [
+      9,
+      18,
+      22,
+      25,
+      35
+     ],
+     "actualSpecial": [
+      1,
+      10
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.071Z",
+     "backfilled": true,
+     "prevHash": "5a3dcc3d32f9ae1a",
+     "hash": "069c1bcb812a1d3c"
+    },
+    {
+     "issue": "26115",
+     "date": "2026-10-10",
+     "pick": [
+      3,
+      10,
+      13,
+      14,
+      26
+     ],
+     "special": [
+      1,
+      12
+     ],
+     "alt": [
+      5,
+      10,
+      13,
+      14,
+      34
+     ],
+     "altSpecial": [
+      1,
+      9
+     ],
+     "actualMain": [
+      12,
+      20,
+      32,
+      33,
+      35
+     ],
+     "actualSpecial": [
+      6,
+      7
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.083Z",
+     "backfilled": true,
+     "prevHash": "d151c55902e1c417",
+     "hash": "5a3dcc3d32f9ae1a"
+    },
+    {
+     "issue": "26114",
+     "date": "2026-10-07",
+     "pick": [
+      3,
+      9,
+      10,
+      13,
+      14
+     ],
+     "special": [
+      1,
+      2
+     ],
+     "alt": [
+      3,
+      10,
+      14,
+      26,
+      34
+     ],
+     "altSpecial": [
+      1,
+      9
+     ],
+     "actualMain": [
+      8,
+      12,
+      15,
+      29,
+      30
+     ],
+     "actualSpecial": [
+      9,
+      12
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.094Z",
+     "backfilled": true,
+     "prevHash": "a7bcb6fcb5e06c00",
+     "hash": "d151c55902e1c417"
+    },
+    {
+     "issue": "26113",
+     "date": "2026-10-05",
+     "pick": [
+      1,
+      3,
+      5,
+      10,
+      14
+     ],
+     "special": [
+      1,
+      9
+     ],
+     "alt": [
+      3,
+      10,
+      13,
+      14,
+      26
+     ],
+     "altSpecial": [
+      1,
+      2
+     ],
+     "actualMain": [
+      2,
+      4,
+      6,
+      10,
+      11
+     ],
+     "actualSpecial": [
+      1,
+      10
+     ],
+     "mainHit": 1,
+     "specialHit": 1,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.105Z",
+     "backfilled": true,
+     "prevHash": "df6c005a9852f976",
+     "hash": "a7bcb6fcb5e06c00"
+    },
+    {
+     "issue": "26112",
+     "date": "2026-09-30",
+     "pick": [
+      10,
+      13,
+      14,
+      26,
+      34
+     ],
+     "special": [
+      1,
+      7
+     ],
+     "alt": [
+      7,
+      10,
+      14,
+      23,
+      26
+     ],
+     "altSpecial": [
+      1,
+      2
+     ],
+     "actualMain": [
+      1,
+      3,
+      5,
+      10,
+      22
+     ],
+     "actualSpecial": [
+      3,
+      9
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.119Z",
+     "backfilled": true,
+     "prevHash": "3c8c33c010b401af",
+     "hash": "df6c005a9852f976"
+    },
+    {
+     "issue": "26111",
+     "date": "2026-09-28",
+     "pick": [
+      10,
+      13,
+      14,
+      23,
+      26
+     ],
+     "special": [
+      4,
+      7
+     ],
+     "alt": [
+      4,
+      10,
+      13,
+      14,
+      34
+     ],
+     "altSpecial": [
+      7,
+      9
+     ],
+     "actualMain": [
+      10,
+      11,
+      17,
+      26,
+      29
+     ],
+     "actualSpecial": [
+      1,
+      3
+     ],
+     "mainHit": 2,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.131Z",
+     "backfilled": true,
+     "prevHash": "77c9d61822c1458c",
+     "hash": "3c8c33c010b401af"
+    },
+    {
+     "issue": "26110",
+     "date": "2026-09-26",
+     "pick": [
+      10,
+      13,
+      14,
+      32,
+      34
+     ],
+     "special": [
+      4,
+      5
+     ],
+     "alt": [
+      13,
+      14,
+      23,
+      24,
+      34
+     ],
+     "altSpecial": [
+      4,
+      8
+     ],
+     "actualMain": [
+      3,
+      24,
+      25,
+      26,
+      35
+     ],
+     "actualSpecial": [
+      7,
+      9
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.142Z",
+     "backfilled": true,
+     "prevHash": "041f18a929f0cbd2",
+     "hash": "77c9d61822c1458c"
+    },
+    {
+     "issue": "26109",
+     "date": "2026-09-23",
+     "pick": [
+      1,
+      8,
+      10,
+      13,
+      14
+     ],
+     "special": [
+      1,
+      4
+     ],
+     "alt": [
+      1,
+      5,
+      10,
+      14,
+      23
+     ],
+     "altSpecial": [
+      1,
+      5
+     ],
+     "actualMain": [
+      12,
+      14,
+      16,
+      27,
+      34
+     ],
+     "actualSpecial": [
+      4,
+      8
+     ],
+     "mainHit": 1,
+     "specialHit": 1,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.154Z",
+     "backfilled": true,
+     "prevHash": "eff16fd35abd4fb6",
+     "hash": "041f18a929f0cbd2"
+    },
+    {
+     "issue": "26108",
+     "date": "2026-09-21",
+     "pick": [
+      2,
+      10,
+      13,
+      14,
+      34
+     ],
+     "special": [
+      1,
+      5
+     ],
+     "alt": [
+      10,
+      13,
+      14,
+      17,
+      23
+     ],
+     "altSpecial": [
+      5,
+      9
+     ],
+     "actualMain": [
+      1,
+      5,
+      7,
+      21,
+      35
+     ],
+     "actualSpecial": [
+      1,
+      4
+     ],
+     "mainHit": 0,
+     "specialHit": 1,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.165Z",
+     "backfilled": true,
+     "prevHash": "7f4282ee638b72a7",
+     "hash": "eff16fd35abd4fb6"
+    },
+    {
+     "issue": "26107",
+     "date": "2026-09-19",
+     "pick": [
+      3,
+      10,
+      13,
+      14,
+      17
+     ],
+     "special": [
+      7,
+      9
+     ],
+     "alt": [
+      3,
+      13,
+      14,
+      28,
+      34
+     ],
+     "altSpecial": [
+      5,
+      9
+     ],
+     "actualMain": [
+      2,
+      5,
+      7,
+      14,
+      22
+     ],
+     "actualSpecial": [
+      4,
+      10
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.176Z",
+     "backfilled": true,
+     "prevHash": "f883041fa03ac45b",
+     "hash": "7f4282ee638b72a7"
+    },
+    {
+     "issue": "26106",
+     "date": "2026-09-16",
+     "pick": [
+      3,
+      10,
+      13,
+      14,
+      34
+     ],
+     "special": [
+      9,
+      12
+     ],
+     "alt": [
+      10,
+      13,
+      14,
+      24,
+      26
+     ],
+     "altSpecial": [
+      8,
+      12
+     ],
+     "actualMain": [
+      14,
+      17,
+      21,
+      25,
+      28
+     ],
+     "actualSpecial": [
+      4,
+      6
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.188Z",
+     "backfilled": true,
+     "prevHash": "9202a3bc56d437e0",
+     "hash": "f883041fa03ac45b"
+    },
+    {
+     "issue": "26105",
+     "date": "2026-09-14",
+     "pick": [
+      1,
+      3,
+      6,
+      13,
+      34
+     ],
+     "special": [
+      8,
+      9
+     ],
+     "alt": [
+      3,
+      6,
+      13,
+      14,
+      26
+     ],
+     "altSpecial": [
+      2,
+      8
+     ],
+     "actualMain": [
+      10,
+      14,
+      30,
+      33,
+      34
+     ],
+     "actualSpecial": [
+      9,
+      12
+     ],
+     "mainHit": 1,
+     "specialHit": 1,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.201Z",
+     "backfilled": true,
+     "prevHash": "a950f2d3274f15bf",
+     "hash": "9202a3bc56d437e0"
+    },
+    {
+     "issue": "26104",
+     "date": "2026-09-12",
+     "pick": [
+      3,
+      10,
+      13,
+      23,
+      34
+     ],
+     "special": [
+      2,
+      7
+     ],
+     "alt": [
+      1,
+      3,
+      13,
+      17,
+      23
+     ],
+     "altSpecial": [
+      2,
+      12
+     ],
+     "actualMain": [
+      1,
+      6,
+      14,
+      15,
+      26
+     ],
+     "actualSpecial": [
+      8,
+      9
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.213Z",
+     "backfilled": true,
+     "prevHash": "4bbbc74030897fc8",
+     "hash": "a950f2d3274f15bf"
+    },
+    {
+     "issue": "26103",
+     "date": "2026-09-09",
+     "pick": [
+      8,
+      10,
+      13,
+      23,
+      34
+     ],
+     "special": [
+      6,
+      7
+     ],
+     "alt": [
+      9,
+      10,
+      13,
+      23,
+      26
+     ],
+     "altSpecial": [
+      5,
+      7
+     ],
+     "actualMain": [
+      3,
+      16,
+      17,
+      32,
+      35
+     ],
+     "actualSpecial": [
+      2,
+      12
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.230Z",
+     "backfilled": true,
+     "prevHash": "bb793deb0b7ff6ea",
+     "hash": "4bbbc74030897fc8"
+    },
+    {
+     "issue": "26102",
+     "date": "2026-09-07",
+     "pick": [
+      1,
+      9,
+      10,
+      13,
+      23
+     ],
+     "special": [
+      6,
+      7
+     ],
+     "alt": [
+      10,
+      13,
+      18,
+      23,
+      33
+     ],
+     "altSpecial": [
+      6,
+      8
+     ],
+     "actualMain": [
+      1,
+      3,
+      7,
+      27,
+      28
+     ],
+     "actualSpecial": [
+      6,
+      7
+     ],
+     "mainHit": 1,
+     "specialHit": 2,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.246Z",
+     "backfilled": true,
+     "prevHash": "091bb3ca2bae467a",
+     "hash": "bb793deb0b7ff6ea"
+    },
+    {
+     "issue": "26101",
+     "date": "2026-09-05",
+     "pick": [
+      2,
+      10,
+      13,
+      23,
+      34
+     ],
+     "special": [
+      6,
+      8
+     ],
+     "alt": [
+      1,
+      2,
+      9,
+      10,
+      23
+     ],
+     "altSpecial": [
+      7,
+      8
+     ],
+     "actualMain": [
+      9,
+      11,
+      18,
+      26,
+      33
+     ],
+     "actualSpecial": [
+      9,
+      11
+     ],
+     "mainHit": 0,
+     "specialHit": 0,
+     "generatedAt": "",
+     "recordedAt": "2026-11-15T14:43:38.263Z",
+     "backfilled": true,
+     "prevHash": "",
+     "hash": "091bb3ca2bae467a"
+    }
+   ],
+   "pending": {
+    "pick": [
+     4,
+     10,
+     12,
+     13,
+     14
+    ],
+    "special": [
+     9,
+     12
+    ],
+    "alt": [
+     10,
+     12,
+     14,
+     17,
+     25
+    ],
+    "altSpecial": [
+     1,
+     12
+    ],
+    "votes": {},
+    "models": 73,
+    "clusters": 46,
+    "forIssue": "26131",
+    "basedOnIssue": "26130",
+    "generatedAt": "2026-11-15T14:43:38.275Z"
+   },
+   "lastHash": "5e70be57b9c9f662",
+   "updated": "2026-11-15T14:43:38.275Z"
+  }
+ }
+}
