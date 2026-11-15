@@ -23,7 +23,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_FILE = ROOT / "data" / "lottery.json"
-MAX_DRAWS = 300
+MAX_DRAWS = 2000
 CST = timezone(timedelta(hours=8))
 FIVE_HUNDRED = "https://datachart.500.com"
 SOURCE_MODE = os.environ.get("LOTTERY_SOURCE", "auto").strip().lower()
@@ -168,7 +168,9 @@ def fetch_sporttery(game_id: str) -> list[dict]:
     game_no = GAME_META[game_id]["param"]
     draws: list[dict] = []
     seen: set[str] = set()
-    for page in (1, 2):
+    page = 1
+    max_page = 40
+    while page <= max_page:
         url = (
             "https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry"
             f"?gameNo={game_no}&provinceId=0&pageSize=100&isVerify=1&pageNo={page}"
@@ -214,7 +216,8 @@ def fetch_sporttery(game_id: str) -> list[dict]:
                 draws.append(draw)
             except (TypeError, ValueError):
                 continue
-        if len(items) < 100:
+        page += 1
+        if len(items) < 100 or len(draws) >= MAX_DRAWS:
             break
 
     if not draws:

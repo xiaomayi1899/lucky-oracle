@@ -101,6 +101,15 @@
 
   function safeNum(x) { return isFinite(x) ? x : 0; }
 
+  /* 公式聚类：相似公式同组，投票时每组总权重为 1 */
+  function clusterSize(gameId, id) {
+    var G = typeof globalThis !== "undefined" ? globalThis : null;
+    var CL = G && G.OracleClusters && G.OracleClusters[gameId];
+    if (!CL || !CL.sizes) return 1;
+    var s = CL.sizes[id];
+    return s && s > 0 ? s : 1;
+  }
+
   function evaluate(ctx, target, weights) {
     var area = target === "special" ? ctx.special : ctx.main;
     if (!area) return null;
@@ -108,20 +117,23 @@
     var pool = area.pool;
     var K = voteK(area);
 
-    var votes = {}, wvotes = {}, scoreSum = {}, winnerBy = {};
+    var votes = {}, wvotes = {}, scoreSum = {}, winnerBy = {}, crowd = {};
     var i, j;
     for (i = 0; i < pool.length; i++) {
       votes[pool[i]] = 0;
       wvotes[pool[i]] = 0;
       scoreSum[pool[i]] = 0;
       winnerBy[pool[i]] = [];
+      crowd[pool[i]] = 0;
     }
 
     var rows = [];
     for (i = 0; i < models.length; i++) {
       var m = models[i];
       /* 权重：优化后按公式权重计票，未优化时全部为 1 */
-      var w = weights && weights[m.id] !== undefined ? safeNum(weights[m.id]) : 1;
+      var grp = clusterSize(ctx.gameId, m.id);
+      var base = weights && weights[m.id] !== undefined ? safeNum(weights[m.id]) : 1;
+      var w = base / grp;
       var items = [];
       for (j = 0; j < pool.length; j++) {
         var v = pool[j];
@@ -142,16 +154,22 @@
       }
       rows.push({
         id: m.id, name: m.name, school: m.school,
-        formula: m.formula, weight: w,
+        formula: m.formula, weight: base, effectiveWeight: w, cluster: grp,
         top: top.map(function (x) { return x.v; }),
         topScores: top.map(function (x) { return x.s; }),
       });
     }
 
+    /* 大众热度：心理学公式看好的次数。票数并列时优先选热度低的，降低撞号风险 */
+    for (i = 0; i < rows.length; i++) {
+      if (rows[i].school !== "psychology") continue;
+      for (j = 0; j < rows[i].top.length; j++) crowd[rows[i].top[j]] += 1;
+    }
+
     var sorted = pool.map(function (v) {
-      return { n: v, votes: wvotes[v], count: votes[v], score: scoreSum[v] };
+      return { n: v, votes: wvotes[v], count: votes[v], score: scoreSum[v], crowd: crowd[v] };
     }).sort(function (a, b) {
-      return b.votes - a.votes || b.count - a.count || b.score - a.score || a.n - b.n;
+      return b.votes - a.votes || a.crowd - b.crowd || b.count - a.count || b.score - a.score || a.n - b.n;
     });
 
     return {
@@ -166,7 +184,20 @@
       models: rows,
       winnerBy: winnerBy,
       maxVotes: sorted.length ? sorted[0].votes : 0,
-      totalVotes: models.length * K,
+      totalVotes: (function () {
+        var t = 0;
+        for (var q = 0; q < models.length; q++) {
+          var wv = weights && weights[models[q].id] !== undefined ? safeNum(weights[models[q].id]) : 1;
+          t += wv / clusterSize(ctx.gameId, models[q].id) * K;
+        }
+        return t;
+      })(),
+      clusterCount: (function () {
+        var G = typeof globalThis !== "undefined" ? globalThis : null;
+        var CL = G && G.OracleClusters && G.OracleClusters[ctx.gameId];
+        if (!CL) return models.length;
+        return target === "special" ? (CL.specialGroups || models.length) : (CL.mainGroups || models.length);
+      })(),
       weighted: !!weights,
     };
   }
@@ -265,7 +296,31 @@
     tally(mainEval, pickMain, "main");
     tally(specEval, pickSpec, "special");
 
+    /* 撞号风险：心理学公式（大众偏好）命中推荐号码的比例。
+       越低说明越反共识，中奖时和你分摊的人越少。 */
+    function collision(ev, picks) {
+      if (!ev || !picks.length) return { risk: 0, baseline: 0 };
+      var psych = ev.models.filter(function (m) { return m.school === "psychology"; });
+      if (!psych.length) return { risk: 0, baseline: 0 };
+      var hit = 0;
+      for (var i = 0; i < psych.length; i++) {
+        for (var j = 0; j < picks.length; j++) {
+          if (psych[i].top.indexOf(picks[j]) >= 0) hit++;
+        }
+      }
+      var total = psych.length * picks.length;
+      return {
+        risk: total ? hit / total : 0,
+        /* 随机组合的期望：每个位置被命中的概率约为 voteK/池大小 */
+        baseline: Math.min(1, ev.voteK / ev.area.pool.length),
+      };
+    }
+    var collisionMain = collision(mainEval, pickMain);
+    var collisionSpec = specEval ? collision(specEval, pickSpec) : { risk: 0, baseline: 0 };
+
     return {
+      collision: collisionMain,
+      collisionSpecial: collisionSpec,
       main: {
         primary: pickMain,
         primaryVotes: mainSets.primaryVotes,
@@ -279,6 +334,7 @@
         modelCount: mainEval.modelCount,
         totalVotes: mainEval.totalVotes,
         maxVotes: mainEval.maxVotes,
+        clusterCount: mainEval.clusterCount,
       },
       special: specEval ? {
         primary: pickSpec,
@@ -293,6 +349,7 @@
         modelCount: specEval.modelCount,
         totalVotes: specEval.totalVotes,
         maxVotes: specEval.maxVotes,
+        clusterCount: specEval.clusterCount,
       } : null,
       schoolStats: schoolStats,
       totalModels: mainEval.modelCount + (specEval ? specEval.modelCount : 0),
@@ -321,7 +378,8 @@
       picks.push(norm.slice(0, K).map(function (x) { return x.v; }));
       ids.push(m.id);
     }
-    return { picks: picks, ids: ids };
+    var baseWeights = models.map(function (m) { return 1 / clusterSize(ctx.gameId, m.id); });
+    return { picks: picks, ids: ids, baseWeights: baseWeights };
   }
 
   /* 构造一期的训练样本：各公式的投票 + 实际开奖 */
@@ -339,6 +397,7 @@
       issue: draws[idx].issue,
       picks: p.picks,
       modelIds: p.ids,
+      baseWeights: p.baseWeights,
       actual: actual,
       set: set,
     };
@@ -354,12 +413,13 @@
     var topV = new Float64Array(k);
     var topI = new Int32Array(k);
 
+    var base = frames.length ? frames[0].baseWeights : null;
     for (var t = 0; t < frames.length; t++) {
       buf.fill(0);
       var fr = frames[t];
       var picks = fr.picks;
       for (var mi = 0; mi < picks.length; mi++) {
-        var w = weights[mi];
+        var w = weights[mi] * (base ? base[mi] : 1);
         if (!w) continue;
         var arr = picks[mi];
         for (var j = 0; j < arr.length; j++) buf[arr[j] - poolMin] += w;

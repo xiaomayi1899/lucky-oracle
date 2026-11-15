@@ -319,3 +319,17 @@ footer {
   vertical-align: 1px;
 }
 body[data-game="dlt"] .wtag { background: rgba(226, 129, 42, .14); border-color: rgba(226, 129, 42, .3); }
+
+/* 同组标记 */
+.gtag {
+  display: none; margin-left: 4px; padding: 1px 4px;
+  font-size: 9px; font-weight: 700; border-radius: 4px;
+  color: var(--dim); background: var(--card2); border: 1px solid var(--line);
+  vertical-align: 1px;
+}
+
+/* 撞号风险 */
+.riskline { margin-top: 10px; font-size: 12px; color: var(--muted); line-height: 1.7; }
+.riskline b.ok { color: var(--ok); }
+.riskline b.warnc { color: var(--warn); }
+.riskline small { display: block; font-size: 10.5px; color: var(--dim); margin-top: 2px; }

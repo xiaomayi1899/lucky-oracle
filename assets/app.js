@@ -255,7 +255,7 @@
       var html = '<div class="pick-row' + (alt ? " alt-row" : "") + '">' +
         '<div class="pick-label">' +
           '<span class="tag' + (alt ? " alt" : "") + '">' + label + "</span>" +
-          '<span class="sumline">合计 ' + votes + " 票 · " +
+          '<span class="sumline">合计 ' + fmtVote(votes) + " 票 · " +
             mainNums.length + (g.specialCount > 0 ? "+" + specNums.length : "") + "</span>" +
         "</div>" +
         '<div class="balls">' +
@@ -276,10 +276,24 @@
 
     var maxV = rec.main.maxVotes || 1;
     html += '<div class="pick-note">' +
-      esc(g.mainLabel) + "最高 " + fmtVote(maxV) + " 票 · 主区 " + rec.main.modelCount + " 个公式" +
-      (state.weights ? "按优化权重投票" : "各投 " + rec.main.voteK + " 票，共 " + rec.main.totalVotes + " 票") +
-      (rec.special ? "；" + esc(g.specialLabel) + " " + rec.special.modelCount + " 个公式共 " + rec.special.totalVotes + " 票" : "") +
+      esc(g.mainLabel) + "最高 " + fmtVote(maxV) + " 票 · " + rec.main.modelCount + " 个公式归并成 " +
+      rec.main.clusterCount + " 个独立观点" + (state.weights ? "并按优化权重计票" : "、每组一票") +
+      "，共 " + fmtVote(rec.main.totalVotes) + " 票" +
+      (rec.special ? "；" + esc(g.specialLabel) + " " + rec.special.clusterCount + " 个观点共 " +
+        fmtVote(rec.special.totalVotes) + " 票" : "") +
       "。票数相同按归一化总分排序。</div>";
+
+    if (rec.collision) {
+      var cr = rec.collision.risk, cb = rec.collision.baseline;
+      var sr = rec.collisionSpecial ? rec.collisionSpecial.risk : 0;
+      var sb = rec.collisionSpecial ? rec.collisionSpecial.baseline : 0;
+      var cls = cr <= cb ? "ok" : "warnc";
+      html += '<div class="riskline">撞号风险：' + esc(g.mainLabel) + ' <b class="' + cls + '">' +
+        (cr * 100).toFixed(1) + '%</b>（随机 ' + (cb * 100).toFixed(1) + '%）' +
+        (rec.special ? " · " + esc(g.specialLabel) + ' <b class="' + (sr <= sb ? "ok" : "warnc") + '">' +
+          (sr * 100).toFixed(1) + "%</b>（随机 " + (sb * 100).toFixed(1) + "%）" : "") +
+        '<small>低 = 少人买 = 中奖时少分摊，但不提高中奖率</small></div>';
+    }
 
     html += '<div class="pick-actions">' +
       '<button class="btn primary" id="copyBtn">复制号码</button>' +
@@ -287,7 +301,7 @@
       "</div>";
 
     box.innerHTML = html;
-    meta.textContent = rec.totalModels + " 个公式 · " + rec.totalVotes + " 票";
+    meta.textContent = rec.totalModels + " 个公式 · " + fmtVote(rec.totalVotes) + " 票";
 
     $("copyBtn").addEventListener("click", function () {
       var text = formatCopy(rec, g);
@@ -410,7 +424,7 @@
     html += "</div>";
 
     box.innerHTML = html;
-    meta.textContent = rec.main.modelCount + " + " + (rec.special ? rec.special.modelCount : 0) + " 个独立公式";
+    meta.textContent = rec.main.clusterCount + " + " + (rec.special ? rec.special.clusterCount : 0) + " 个独立观点";
   }
 
   function modelRow(m, pickedMain, pickedSpec) {
@@ -424,7 +438,8 @@
       '<div class="model-top">' +
         '<span class="model-name">' + esc(m.name) +
           '<span class="wtag" style="display:' + (Math.abs(m.weight - 1) > 1e-9 ? "inline-block" : "none") + '">×' +
-          (Math.round(m.weight * 100) / 100) + "</span></span>" +
+          (Math.round(m.weight * 100) / 100) + "</span>" +
+          '<span class="gtag" style="display:' + (m.cluster > 1 ? "inline-block" : "none") + '">同组 ' + m.cluster + "</span></span>" +
         '<span class="model-hits">' + chips + "</span>" +
       "</div>" +
       '<div class="model-formula">' + esc(m.formula) + "</div>" +
@@ -542,6 +557,13 @@
     });
     var avgMain = (sumMain / rows.length).toFixed(2);
     var avgSpec = (sumSpec / rows.length).toFixed(2);
+    /* 固定号码对照：每期都买最小的一注 */
+    var fixedPick = [];
+    for (var fv = g.mainMin; fv < g.mainMin + g.mainCount; fv++) fixedPick.push(fv);
+    var fixedSum = 0;
+    rows.forEach(function (r) { fixedSum += S.hitCount(fixedPick, r.actualMain); });
+    var fixedAvg = (fixedSum / rows.length).toFixed(2);
+    var fixedLabel = two(g.mainMin) + "-" + two(g.mainMin + g.mainCount - 1);
     /* 纯随机期望：k 个号中命中的期望 = k * k / 池大小 */
     var randMain = (g.mainCount * g.mainCount / g.mainMax).toFixed(2);
     var randSpec = g.specialCount > 0 ? (g.specialCount * g.specialCount / g.specialMax).toFixed(2) : "—";
@@ -551,9 +573,14 @@
       '<div class="bt-cell"><div class="v">' + maxMain + '</div><div class="k">' + esc(g.mainLabel) + "最好成绩</div></div>" +
       (g.specialCount > 0 ? '<div class="bt-cell"><div class="v">' + avgSpec + '</div><div class="k">' + esc(g.specialLabel) + "平均命中</div></div>" : "") +
       "</div>";
-    html += '<div class="muted" style="margin-bottom:10px">纯随机选号的期望命中：' +
-      esc(g.mainLabel) + " " + randMain + (g.specialCount > 0 ? " · " + esc(g.specialLabel) + " " + randSpec : "") +
-      "（共 " + rows.length + " 期）。如果两者接近，说明公式并没有带来额外优势——这很正常。</div>";
+    html += '<div class="muted" style="margin-bottom:10px">' +
+      "共 " + rows.length + " 期。纯随机期望 " + randMain +
+      " · 固定买 " + fixedLabel + " 号 " + fixedAvg +
+      " · 本推荐 " + avgMain +
+      "。" + (Math.abs(parseFloat(fixedAvg) - parseFloat(avgMain)) <= 0.05
+        ? "本推荐和固定买号几乎一样——这说明公式没有带来额外优势。"
+        : "本推荐与固定买号有差异，但差异在随机波动范围内，不能说明更准。") +
+      "</div>";
 
     html += '<div class="bt-rows">';
     rows.forEach(function (r) {
