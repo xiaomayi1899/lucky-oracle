@@ -418,6 +418,85 @@
     };
   }
 
+  /* ==================== 多注方案 ==================== */
+
+  /*
+   * 生成 count 注互不重叠的组合。
+   * 第 1 注是训练后的最优组合；后续每注要求与已有注重叠 ≤ maxOverlap 个号码，
+   * 从而覆盖更多不同的号码。买得越多，中奖概率越高（成本也等比增加）。
+   */
+  function recommendMulti(ctx, count, opts, maxOverlap) {
+    var weights = opts && opts.weights ? opts.weights : null;
+    var mainEval = evaluate(ctx, "main", weights);
+    var specEval = ctx.game.specialCount > 0 ? evaluate(ctx, "special", weights) : null;
+    var cfg = tuningOf(ctx.gameId);
+    var k = ctx.game.mainCount;
+    var limit = Math.min(count, 10);
+
+    var sorted = mainEval.sorted;
+    var poolSize = Math.min(sorted.length, 20);
+    var candNums = sorted.slice(0, poolSize).map(function (x) { return x.n; });
+    var voteMap = {}, scoreMap = {};
+    for (var i = 0; i < sorted.length; i++) {
+      voteMap[sorted[i].n] = sorted[i].votes;
+      scoreMap[sorted[i].n] = sorted[i].score;
+    }
+    var sumMid = mainEval.area.sumSeries.length ? C.median(mainEval.area.sumSeries) : 0;
+    var shapeW = cfg.shapeWeight;
+
+    var all = [];
+    C.eachCombination(candNums, k, function (comb) {
+      var votes = 0, score = 0, j;
+      for (j = 0; j < k; j++) { votes += voteMap[comb[j]] || 0; score += scoreMap[comb[j]] || 0; }
+      var shape = shapeScore(mainEval.area, comb, sumMid);
+      all.push({
+        nums: comb.slice().sort(function (a, b) { return a - b; }),
+        votes: votes, score: score,
+        shape: shape,
+        adjusted: votes * ((1 - shapeW) + shapeW * shape),
+      });
+    });
+    all.sort(function (a, b) { return b.adjusted - a.adjusted || b.votes - a.votes; });
+
+    var overlapCap = maxOverlap === undefined ? Math.max(1, k - 4) : maxOverlap;
+    var picks = [];
+    for (var t = 0; t < all.length && picks.length < limit; t++) {
+      var cand = all[t];
+      var ok = true;
+      for (var p = 0; p < picks.length; p++) {
+        var ov = 0;
+        for (var q = 0; q < cand.nums.length; q++) if (picks[p].nums.indexOf(cand.nums[q]) >= 0) ov++;
+        if (ov > overlapCap) { ok = false; break; }
+      }
+      if (ok) picks.push(cand);
+    }
+
+    var specPick = specEval ? specEval.sorted.slice(0, ctx.game.specialCount).map(function (x) { return x.n; }) : [];
+    var specialAlt = [];
+    if (specEval) {
+      for (var m = 0; m < specEval.sorted.length && specialAlt.length < ctx.game.specialCount; m++) {
+        if (specPick.indexOf(specEval.sorted[m].n) < 0) specialAlt.push(specEval.sorted[m].n);
+      }
+    }
+
+    var covered = {};
+    picks.forEach(function (p) { p.nums.forEach(function (v) { covered[v] = 1; }); });
+
+    return {
+      picks: picks.map(function (p, idx) {
+        return {
+          index: idx + 1,
+          nums: p.nums,
+          votes: p.votes,
+          special: idx % 2 === 0 ? specPick : specialAlt,
+        };
+      }),
+      coverCount: Object.keys(covered).length,
+      unitCost: 2 * count,
+      special: specPick,
+    };
+  }
+
   /* ==================== 权重优化 ==================== */
 
   /* 只算主区每个公式的 topK，不做计票，供训练集使用 */
@@ -689,6 +768,7 @@
     modelsOf: modelsOf,
     evaluate: evaluate,
     recommend: recommend,
+    recommendMulti: recommendMulti,
     pickSets: pickSets,
     backtest: backtest,
     makeFrame: makeFrame,

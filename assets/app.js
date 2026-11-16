@@ -21,6 +21,7 @@
     trendTarget: "main",
     showAllVotes: false,
     modelData: null,
+    multi: null,
     track: null,
     fetching: false,
     updated: "",
@@ -93,6 +94,8 @@
       var mw = state.modelData && state.modelData.games && state.modelData.games[state.game]
         ? state.modelData.games[state.game].weights : null;
       state.rec = S.recommend(state.ctx, { weights: mw });
+      state.multi = null;
+      try { state.multi = S.recommendMulti(state.ctx, 5, { weights: mw }); } catch (e) { /* ignore */ }
       state.backtest = null;
     } catch (e) {
       state.ctx = null; state.rec = null;
@@ -324,6 +327,25 @@
       '<button class="btn primary" id="copyBtn">复制号码</button>' +
       '<button class="btn" id="recalcBtn">按最新数据重算</button>' +
       "</div>";
+
+    var mt = state.multi;
+    if (mt && mt.picks && mt.picks.length > 1) {
+      html += '<div class="multi">' +
+        '<div class="multi-head"><span>多注方案 · ' + mt.picks.length + " 注</span>" +
+          '<span class="badge">成本 ' + mt.unitCost + " 元 · 覆盖 " + mt.coverCount + " 个号</span></div>" +
+        mt.picks.map(function (p) {
+          return '<div class="multi-row"><span class="idx">' + p.index + "</span>" +
+            '<span class="mballs">' +
+            p.nums.map(function (n) { return '<span class="ball small">' + two(n) + "</span>"; }).join("") +
+            (p.special && p.special.length ? '<span class="ball-split"></span>' +
+              p.special.map(function (n) { return '<span class="ball small special">' + two(n) + "</span>"; }).join("") : "") +
+            "</span></div>";
+        }).join("") +
+        '<div class="multi-note">' + mt.picks.length + " 注的中奖概率约是单注的 " +
+          mt.picks.length + " 倍，成本也是 " + mt.picks.length +
+          " 倍，期望回报率不变。注与注之间尽量不重叠，覆盖更多号码。</div>" +
+        "</div>";
+    }
 
     box.innerHTML = html;
     meta.textContent = rec.totalModels + " 个公式 · " + fmtVote(rec.totalVotes) + " 票";
