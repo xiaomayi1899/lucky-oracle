@@ -19,16 +19,9 @@
     rec: null,
     voteTarget: "main",
     trendTarget: "main",
-    backtest: null,
-    backtestBusy: false,
     showAllVotes: false,
-    backfit: null,
-    backfitBusy: false,
     modelData: null,
-    weights: null,
     track: null,
-    optimizing: false,
-    optResult: null,
     fetching: false,
     updated: "",
   };
@@ -190,9 +183,7 @@
         state.trendTarget = "main";
         lsSet(LS_GAME, gid);
         document.body.setAttribute("data-game", gid);
-        state.weights = loadWeights(gid);
-        state.optResult = null;
-        try { state.ctx = null; state.rec = null; state.backtest = null; compute(); } catch (e) { /* ignore */ }
+                try { state.ctx = null; state.rec = null; state.backtest = null; compute(); } catch (e) { /* ignore */ }
         renderAll();
       });
     });
@@ -304,7 +295,7 @@
     var maxV = rec.main.maxVotes || 1;
     html += '<div class="pick-note">' +
       esc(g.mainLabel) + "最高 " + fmtVote(maxV) + " 票 · " + rec.main.modelCount + " 个公式归并成 " +
-      rec.main.clusterCount + " 个独立观点" + (state.weights ? "并按优化权重计票" : "、每组一票") +
+      rec.main.clusterCount + " 个独立观点，按训练权重合计票数" +
       "，共 " + fmtVote(rec.main.totalVotes) + " 票" +
       (rec.special ? "；" + esc(g.specialLabel) + " " + rec.special.clusterCount + " 个观点共 " +
         fmtVote(rec.special.totalVotes) + " 票" : "") +
@@ -420,66 +411,6 @@
     });
   }
 
-  /* ---------- 渲染：学科明细 ---------- */
-  function renderSchools() {
-    var box = $("schoolBody");
-    var meta = $("schoolMeta");
-    var rec = state.rec;
-    if (!rec) { box.innerHTML = '<div class="muted">—</div>'; meta.textContent = "—"; return; }
-
-    var pickedMain = rec.main.primary;
-    var pickedSpec = rec.special ? rec.special.primary : [];
-
-    var bySchool = {};
-    S.SCHOOL_ORDER.forEach(function (sid) { bySchool[sid] = { main: [], special: [] }; });
-    rec.main.models.forEach(function (m) { bySchool[m.school].main.push(m); });
-    if (rec.special) rec.special.models.forEach(function (m) { bySchool[m.school].special.push(m); });
-
-    var html = '<div class="school-list">';
-    S.SCHOOL_ORDER.forEach(function (sid) {
-      var sch = S.SCHOOLS[sid];
-      var bucket = bySchool[sid];
-      var models = bucket.main.concat(bucket.special);
-      var stat = rec.schoolStats[sid] || { main: 0, special: 0 };
-      var votesIn = stat.main + stat.special;
-      html += '<details class="school" data-school="' + sid + '">' +
-        '<summary class="school-head">' +
-          '<span class="school-dot" style="background:' + sch.color + '"></span>' +
-          '<span class="school-name">' + esc(sch.name) + "</span>" +
-          '<span class="school-desc">' + esc(sch.desc) + "</span>" +
-          '<span class="school-count">' + models.length + " 式 · " + votesIn + " 票</span>" +
-          '<span class="school-arrow">▶</span>' +
-        "</summary>" +
-        '<div class="school-body">' +
-          '<div class="school-desc-full">' + esc(sch.desc) + "</div>" +
-          models.map(function (m) { return modelRow(m, pickedMain, pickedSpec); }).join("") +
-        "</div></details>";
-    });
-    html += "</div>";
-
-    box.innerHTML = html;
-    meta.textContent = rec.main.clusterCount + " + " + (rec.special ? rec.special.clusterCount : 0) + " 个独立观点";
-  }
-
-  function modelRow(m, pickedMain, pickedSpec) {
-    var isSpecial = m.id.indexOf("_sp_") >= 0;
-    var picked = isSpecial ? pickedSpec : pickedMain;
-    var chips = m.top.map(function (n) {
-      var on = picked.indexOf(n) >= 0;
-      return '<span class="chip' + (on ? " on" : "") + (isSpecial ? " special" : "") + '">' + two(n) + "</span>";
-    }).join("");
-    return '<div class="model-row">' +
-      '<div class="model-top">' +
-        '<span class="model-name">' + esc(m.name) +
-          '<span class="wtag" style="display:' + (Math.abs(m.weight - 1) > 1e-9 ? "inline-block" : "none") + '">×' +
-          (Math.round(m.weight * 100) / 100) + "</span>" +
-          '<span class="gtag" style="display:' + (m.cluster > 1 ? "inline-block" : "none") + '">同组 ' + m.cluster + "</span></span>" +
-        '<span class="model-hits">' + chips + "</span>" +
-      "</div>" +
-      '<div class="model-formula">' + esc(m.formula) + "</div>" +
-      "</div>";
-  }
-
   /* ---------- 渲染：走势矩阵 ---------- */
   function renderTrend() {
     var box = $("trendBody");
@@ -521,246 +452,6 @@
         '<span><i style="background:var(--bg2);border:1px solid var(--line)"></i>未开</span>' +
         "<span>上半部分较新（最近 5 期）</span>" +
       "</div>";
-  }
-
-  /* ---------- 回测 ---------- */
-  function runBacktest() {
-    if (state.backtestBusy) return;
-    if (!state.ctx || !state.data) return;
-    var g = C.GAMES[state.game];
-    var gameData = state.data.games[state.game];
-    var periods = 100;
-    if (gameData.draws.length < WINDOW + periods + 2) periods = Math.max(5, gameData.draws.length - WINDOW - 2);
-
-    state.backtestBusy = true;
-    var btn = $("backtestBtn");
-    btn.disabled = true;
-    var body = $("backtestBody");
-    body.innerHTML = '<div class="muted">正在回放 ' + periods + " 期…</div>";
-
-    var rows = [];
-    var i = 0;
-
-    function step() {
-      var t0 = performance.now();
-      while (i < periods && performance.now() - t0 < 60) {
-        var history = gameData.draws.slice(i + 1);
-        var ctx = C.buildContext(g, history, WINDOW);
-        var rec = S.recommend(ctx, { weights: state.weights });
-        var actual = gameData.draws[i];
-        var actualMain = (actual[g.keyMain] || []).slice().sort(function (a, b) { return a - b; });
-        var actualSpec = g.specialCount > 0 ? (actual[g.keySpecial] || []).slice().sort(function (a, b) { return a - b; }) : [];
-        rows.push({
-          issue: actual.issue,
-          date: actual.date,
-          mainHit: S.hitCount(rec.main.primary, actualMain),
-          specHit: g.specialCount > 0 ? S.hitCount(rec.special.primary, actualSpec) : 0,
-          pickMain: rec.main.primary,
-          pickSpec: rec.special ? rec.special.primary : [],
-          actualMain: actualMain,
-          actualSpec: actualSpec,
-        });
-        i++;
-      }
-      if (i < periods) {
-        body.innerHTML = '<div class="muted">正在回放 ' + i + " / " + periods + " 期…</div>" +
-          '<progress max="' + periods + '" value="' + i + '"></progress>';
-        setTimeout(step, 0);
-      } else {
-        state.backtestBusy = false;
-        btn.disabled = false;
-        state.backtest = rows;
-        renderBacktest();
-      }
-    }
-    setTimeout(step, 0);
-  }
-
-  function renderBacktest() {
-    var body = $("backtestBody");
-    var rows = state.backtest;
-    var g = C.GAMES[state.game];
-    if (!rows || !rows.length) {
-      body.innerHTML = '<div class="muted">用同一套公式，回放历史每一期，看看命中几个。回测不改变未来概率。</div>';
-      return;
-    }
-    var sumMain = 0, sumSpec = 0, maxMain = 0;
-    rows.forEach(function (r) {
-      sumMain += r.mainHit; sumSpec += r.specHit;
-      if (r.mainHit > maxMain) maxMain = r.mainHit;
-    });
-    var avgMain = (sumMain / rows.length).toFixed(2);
-    var avgSpec = (sumSpec / rows.length).toFixed(2);
-    /* 固定号码对照：每期都买最小的一注 */
-    var fixedPick = [];
-    for (var fv = g.mainMin; fv < g.mainMin + g.mainCount; fv++) fixedPick.push(fv);
-    var fixedSum = 0;
-    rows.forEach(function (r) { fixedSum += S.hitCount(fixedPick, r.actualMain); });
-    var fixedAvg = (fixedSum / rows.length).toFixed(2);
-    var fixedLabel = two(g.mainMin) + "-" + two(g.mainMin + g.mainCount - 1);
-    /* 纯随机期望：k 个号中命中的期望 = k * k / 池大小 */
-    var randMain = (g.mainCount * g.mainCount / g.mainMax).toFixed(2);
-    var randSpec = g.specialCount > 0 ? (g.specialCount * g.specialCount / g.specialMax).toFixed(2) : "—";
-
-    var html = '<div class="bt-grid">' +
-      '<div class="bt-cell"><div class="v">' + avgMain + '</div><div class="k">' + esc(g.mainLabel) + "平均命中</div></div>" +
-      '<div class="bt-cell"><div class="v">' + maxMain + '</div><div class="k">' + esc(g.mainLabel) + "最好成绩</div></div>" +
-      (g.specialCount > 0 ? '<div class="bt-cell"><div class="v">' + avgSpec + '</div><div class="k">' + esc(g.specialLabel) + "平均命中</div></div>" : "") +
-      "</div>";
-    html += '<div class="muted" style="margin-bottom:10px">' +
-      "共 " + rows.length + " 期。纯随机期望 " + randMain +
-      " · 固定买 " + fixedLabel + " 号 " + fixedAvg +
-      " · 本推荐 " + avgMain +
-      "。" + (Math.abs(parseFloat(fixedAvg) - parseFloat(avgMain)) <= 0.05
-        ? "本推荐和固定买号几乎一样——这说明公式没有带来额外优势。"
-        : "本推荐与固定买号有差异，但差异在随机波动范围内，不能说明更准。") +
-      "</div>";
-
-    html += '<div class="bt-rows">';
-    rows.forEach(function (r) {
-      var nums = r.actualMain.map(function (n) {
-        return '<span class="mini' + (r.pickMain.indexOf(n) >= 0 ? " on" : "") + '">' + two(n) + "</span>";
-      }).join("");
-      var sp = r.actualSpec.map(function (n) {
-        return '<span class="mini sp' + (r.pickSpec.indexOf(n) >= 0 ? " on" : "") + '">' + two(n) + "</span>";
-      }).join("");
-      html += '<div class="bt-row">' +
-        '<span class="iss">' + esc(String(r.issue).slice(-6)) + "</span>" +
-        '<span class="nums">' + nums + (sp ? " ｜ " + sp : "") + "</span>" +
-        '<span class="hit' + (r.mainHit === 0 ? " zero" : "") + '">中 ' + r.mainHit + "</span>" +
-        "</div>";
-    });
-    html += "</div>";
-    body.innerHTML = html;
-  }
-
-  /* ---------- 反推实验室 ---------- */
-  var BF_TRAIN = 60;
-  var BF_TEST = 200;
-
-  function renderBackfit() {
-    var body = $("backfitBody");
-    var meta = $("backfitMeta");
-    if (!body) return;
-    var g = C.GAMES[state.game];
-    var r = state.backfit;
-
-    if (state.backfitBusy) return;
-
-    if (!r || r.game !== state.game) {
-      meta.textContent = "未运行";
-      body.innerHTML = '<div class="muted">用最近 ' + BF_TRAIN +
-        " 期反推出「最优权重」，再用接下来 " + BF_TEST +
-        ' 期检验。这是对「根据历史反推规律」最直接的验证。</div>' +
-        '<div class="pick-actions"><button class="btn primary" id="bfRun">开始反推</button></div>';
-      $("bfRun").addEventListener("click", runBackfit);
-      return;
-    }
-
-    var trainUp = r.baseTrain ? (r.tunedTrain / r.baseTrain - 1) * 100 : 0;
-    var testUp = r.baseTest ? (r.tunedTest / r.baseTest - 1) * 100 : 0;
-
-    meta.textContent = r.trainN + " 期反推 · " + r.testN + " 期检验";
-
-    body.innerHTML =
-      '<div class="bt-grid">' +
-        '<div class="bt-cell"><div class="v">' + r.baseTrain.toFixed(2) + '</div><div class="k">被反推的 ' + r.trainN + ' 期（原始）</div></div>' +
-        '<div class="bt-cell"><div class="v">' + r.tunedTrain.toFixed(2) + '</div><div class="k">反推后</div></div>' +
-        '<div class="bt-cell"><div class="v ' + (trainUp > 0 ? "ok" : "bad") + '">' +
-          (trainUp > 0 ? "+" : "") + trainUp.toFixed(0) + '%</div><div class="k">训练集提升</div></div>' +
-      "</div>" +
-      '<div class="bt-grid">' +
-        '<div class="bt-cell"><div class="v">' + r.baseTest.toFixed(2) + '</div><div class="k">接下来 ' + r.testN + ' 期（原始）</div></div>' +
-        '<div class="bt-cell"><div class="v">' + r.tunedTest.toFixed(2) + '</div><div class="k">用反推权重</div></div>' +
-        '<div class="bt-cell"><div class="v ' + (testUp > 0 ? "ok" : "bad") + '">' +
-          (testUp > 0 ? "+" : "") + testUp.toFixed(0) + '%</div><div class="k">未来期变化</div></div>' +
-      "</div>" +
-      '<p class="warn" style="margin-top:10px">' +
-        "反推在被反推的那 " + r.trainN + " 期上提升了 " + trainUp.toFixed(0) +
-        "%，但接下来的 " + r.testN + " 期变化 " + testUp.toFixed(0) + "%。" +
-        "这就是过拟合：权重记住了训练期开奖号码的偶然波动，而不是可延续的规律。" +
-        (trainUp > 15 && Math.abs(testUp) < 5
-          ? "提升越大、未来越无效，说明拟合的是噪声。"
-          : "") +
-      "</p>" +
-      '<div class="pick-actions"><button class="btn" id="bfAgain">重新反推</button></div>';
-
-    $("bfAgain").addEventListener("click", runBackfit);
-  }
-
-  function runBackfit() {
-    if (state.backfitBusy || !state.data) return;
-    var g = C.GAMES[state.game];
-    var gameData = state.data.games[state.game];
-    if (!gameData || !gameData.draws) return;
-    var draws = gameData.draws;
-    var win = WINDOW;
-    var k = g.mainCount, poolMin = g.mainMin, size = g.mainMax - g.mainMin + 1;
-    var trainN = Math.min(BF_TRAIN, Math.max(10, draws.length - win - 2));
-    var testN = Math.min(BF_TEST, Math.max(20, draws.length - win - trainN - 2));
-
-    state.backfitBusy = true;
-    var body = $("backfitBody");
-    var meta = $("backfitMeta");
-    meta.textContent = "运行中";
-    body.innerHTML = '<div class="muted" id="bfMsg">正在构建样本…</div><progress id="bfBar" max="100" value="0"></progress>';
-
-    function setP(ratio, text) {
-      var bar = $("bfBar"), msg = $("bfMsg");
-      if (bar) bar.value = Math.round(Math.max(0, Math.min(1, ratio)) * 100);
-      if (msg) msg.textContent = text;
-    }
-
-    var train = [], test = [], idx = 0, total = trainN + testN;
-
-    function build() {
-      var t0 = performance.now();
-      while (performance.now() - t0 < 45) {
-        if (idx >= total) { optimise(); return; }
-        var f = S.makeFrame(g, draws, win, idx);
-        if (f) { if (idx < trainN) train.push(f); else test.push(f); }
-        idx++;
-      }
-      setP(idx / total * 0.45, "正在构建样本 " + idx + " / " + total + " 期…");
-      setTimeout(build, 0);
-    }
-
-    function optimise() {
-      if (!train.length || !test.length) {
-        state.backfitBusy = false;
-        state.backfit = null;
-        renderBackfit();
-        return;
-      }
-      var opt = S.createOptimizer(train, k, poolMin, size, { rounds: 3 });
-      function tick() {
-        var t0 = performance.now();
-        while (!opt.state.finished && performance.now() - t0 < 40) opt.stepOne();
-        if (!opt.state.finished) {
-          setP(0.45 + opt.progress() * 0.45, "正在反推权重 " + Math.round(opt.progress() * 100) + "%…");
-          setTimeout(tick, 0);
-          return;
-        }
-        var res = opt.result();
-        var ones = [];
-        for (var i = 0; i < res.weights.length; i++) ones.push(1);
-        state.backfit = {
-          game: state.game,
-          trainN: train.length,
-          testN: test.length,
-          baseTrain: res.baseScore,
-          tunedTrain: res.tunedScore,
-          baseTest: S.evalFrames(test, ones, k, poolMin, size),
-          tunedTest: S.evalFrames(test, res.weights, k, poolMin, size),
-        };
-        state.backfitBusy = false;
-        renderBackfit();
-      }
-      setP(0.45, "正在反推权重…");
-      tick();
-    }
-
-    build();
   }
 
   /* ---------- 训练引擎 ---------- */
@@ -926,179 +617,6 @@
     body.innerHTML = html;
   }
 
-  /* ---------- 权重优化 ---------- */
-  var OPT_TRAIN = 100;
-  var OPT_VALID = 50;
-
-  function weightsKey(gid) { return "oracle.weights." + gid; }
-
-  function loadWeights(gid) {
-    var raw = lsGet(weightsKey(gid));
-    if (!raw) return null;
-    try {
-      var w = JSON.parse(raw);
-      return w && typeof w === "object" ? w : null;
-    } catch (e) { return null; }
-  }
-
-  function saveWeights(gid, w) {
-    try { lsSet(weightsKey(gid), JSON.stringify(w)); } catch (e) { /* ignore */ }
-    state.weights = w;
-    compute();
-    renderAll();
-  }
-
-  function clearWeights() {
-    try { localStorage.removeItem(weightsKey(state.game)); } catch (e) { /* ignore */ }
-    state.weights = null;
-    compute();
-    renderAll();
-  }
-
-  function setOptProgress(ratio, text) {
-    var bar = $("optBar"), msg = $("optMsg");
-    if (bar) bar.value = Math.round(Math.max(0, Math.min(1, ratio)) * 100);
-    if (msg) msg.textContent = text;
-  }
-
-  function verdict(validUp, trainUp) {
-    if (validUp > 1) {
-      return "独立验证也提升了，说明这段时间里确实存在可复用的规律。但彩票每期独立，这不等于下一期更准。";
-    }
-    if (validUp < -1) {
-      return "训练集提升 " + trainUp.toFixed(1) + "%，但独立验证下降了 " + Math.abs(validUp).toFixed(1) +
-        "%。这是典型的过拟合：权重记住的是这 " + OPT_TRAIN + " 期的噪声，换一段历史就失效。" +
-        "所以这套权重会让回测数字更好看，但不会提高真实中奖率。";
-    }
-    return "独立验证基本持平，说明这次调整既没有明显帮助，也没有明显伤害。";
-  }
-
-  function renderOpt() {
-    var body = $("optBody");
-    var meta = $("optMeta");
-    if (!body) return;
-    var g = C.GAMES[state.game];
-
-    if (meta) meta.textContent = state.weights ? "已应用优化权重" : "等权 1.0×";
-
-    if (state.optimizing) {
-      body.innerHTML = '<div class="muted" id="optMsg">正在准备…</div>' +
-        '<progress id="optBar" max="100" value="0"></progress>';
-      return;
-    }
-
-    var r = state.optResult;
-    if (!r) {
-      body.innerHTML = '<div class="muted">用最近 ' + OPT_TRAIN +
-        " 期，搜索让「加权票数前 " + g.mainCount + " 名」命中最多的公式权重。" +
-        "优化会用前半 / 后半两折同时约束，避免只拟合某一段历史。</div>" +
-        '<div class="pick-actions"><button class="btn primary" id="optRun">开始优化</button>' +
-        (state.weights ? '<button class="btn" id="optReset">恢复等权</button>' : "") + "</div>";
-      $("optRun").addEventListener("click", runOptimize);
-      if ($("optReset")) $("optReset").addEventListener("click", clearWeights);
-      return;
-    }
-
-    var trainUp = r.baseScore ? (r.tunedScore / r.baseScore - 1) * 100 : 0;
-    var validUp = r.validBase ? (r.validTuned / r.validBase - 1) * 100 : 0;
-    var applied = !!state.weights;
-
-    body.innerHTML =
-      '<div class="bt-grid">' +
-        '<div class="bt-cell"><div class="v">' + r.baseScore.toFixed(2) + '</div><div class="k">训练集 等权</div></div>' +
-        '<div class="bt-cell"><div class="v">' + r.tunedScore.toFixed(2) + '</div><div class="k">训练集 优化后</div></div>' +
-        '<div class="bt-cell"><div class="v ' + (trainUp > 0 ? "ok" : "bad") + '">' +
-          (trainUp > 0 ? "+" : "") + trainUp.toFixed(1) + '%</div><div class="k">训练集变化</div></div>' +
-      "</div>" +
-      '<div class="bt-grid">' +
-        '<div class="bt-cell"><div class="v">' + r.validBase.toFixed(2) + '</div><div class="k">独立验证 等权</div></div>' +
-        '<div class="bt-cell"><div class="v">' + r.validTuned.toFixed(2) + '</div><div class="k">独立验证 优化后</div></div>' +
-        '<div class="bt-cell"><div class="v ' + (validUp > 0 ? "ok" : "bad") + '">' +
-          (validUp > 0 ? "+" : "") + validUp.toFixed(1) + '%</div><div class="k">独立验证变化</div></div>' +
-      "</div>" +
-      '<div class="muted">训练集：最近 ' + r.trainN + " 期；独立验证：紧随其前的 " + r.validN +
-      " 期，优化时完全没有使用。共调整 " + r.changed + " 个公式（上调 " + r.upweighted +
-      "，下调 " + r.downweighted + "）。</div>" +
-      '<p class="warn" style="margin-top:10px">' + verdict(validUp, trainUp) + "</p>" +
-      '<div class="pick-actions">' +
-        '<button class="btn ' + (applied ? "" : "primary") + '" id="optApply">' +
-          (applied ? "重新应用" : "应用这套权重") + "</button>" +
-        '<button class="btn" id="optReset">恢复等权</button>' +
-      "</div>";
-
-    $("optApply").addEventListener("click", function () {
-      saveWeights(state.game, S.weightMap(r.modelIds, r.weights));
-      toast("已应用优化权重，推荐号码已重算");
-    });
-    $("optReset").addEventListener("click", function () {
-      clearWeights();
-      toast("已恢复等权投票");
-    });
-  }
-
-  function runOptimize() {
-    if (state.optimizing || !state.data) return;
-    var g = C.GAMES[state.game];
-    var gameData = state.data.games[state.game];
-    if (!gameData || !gameData.draws) return;
-    var draws = gameData.draws;
-    var win = WINDOW;
-    var k = g.mainCount, poolMin = g.mainMin, size = g.mainMax - g.mainMin + 1;
-    var trainN = Math.min(OPT_TRAIN, Math.max(10, draws.length - win - 2));
-    var validN = Math.min(OPT_VALID, Math.max(0, draws.length - win - trainN - 2));
-
-    state.optimizing = true;
-    state.optResult = null;
-    renderOpt();
-
-    var train = [], valid = [], idx = 0, total = trainN + validN;
-
-    function buildChunk() {
-      var t0 = performance.now();
-      while (performance.now() - t0 < 45) {
-        if (idx >= total) { startSearch(); return; }
-        var f = S.makeFrame(g, draws, win, idx);
-        if (f) { if (idx < trainN) train.push(f); else valid.push(f); }
-        idx++;
-      }
-      setOptProgress(idx / total * 0.5, "正在构建样本 " + idx + " / " + total + " 期…");
-      setTimeout(buildChunk, 0);
-    }
-
-    function startSearch() {
-      if (!train.length) { state.optimizing = false; renderOpt(); return; }
-      var half = Math.floor(train.length / 2);
-      var folds = [train.slice(0, half), train.slice(half)];
-      var opt = S.createOptimizer(train, k, poolMin, size, { rounds: 2, folds: folds });
-      if (!opt) { state.optimizing = false; renderOpt(); return; }
-
-      function tick() {
-        var t0 = performance.now();
-        while (!opt.state.finished && performance.now() - t0 < 40) opt.stepOne();
-        if (!opt.state.finished) {
-          setOptProgress(0.5 + opt.progress() * 0.45, "正在搜索公式权重 " + Math.round(opt.progress() * 100) + "%…");
-          setTimeout(tick, 0);
-          return;
-        }
-        var res = opt.result();
-        var ones = [];
-        for (var i = 0; i < res.weights.length; i++) ones.push(1);
-        res.validBase = valid.length ? S.evalFrames(valid, ones, k, poolMin, size) : 0;
-        res.validTuned = valid.length ? S.evalFrames(valid, res.weights, k, poolMin, size) : 0;
-        res.trainN = train.length;
-        res.validN = valid.length;
-        res.game = state.game;
-        state.optResult = res;
-        state.optimizing = false;
-        renderOpt();
-      }
-      setOptProgress(0.5, "正在搜索公式权重…");
-      tick();
-    }
-
-    buildChunk();
-  }
-
   /* ---------- 汇总渲染 ---------- */
   function renderAll() {
     document.body.setAttribute("data-game", state.game);
@@ -1125,11 +643,7 @@
       (location.hash ? location.hash.replace(/^#/, "") : "");
     if (urlGame && C.GAMES[urlGame]) state.game = urlGame;
     document.body.setAttribute("data-game", state.game);
-    state.weights = loadWeights(state.game);
     renderTabs();
-
-    var btn = $("backtestBtn");
-    if (btn) btn.addEventListener("click", runBacktest);
 
     if (!window.OracleClusters) {
       setStatus("警告：公式聚类表未加载，投票可能退化，请刷新页面");
@@ -1152,7 +666,18 @@
 
     /* Service Worker */
     if ("serviceWorker" in navigator && location.protocol === "https:") {
-      navigator.serviceWorker.register("sw.js").catch(function () { /* ignore */ });
+      navigator.serviceWorker.register("sw.js").then(function (reg) {
+        /* 有新版本时提示刷新，避免看到旧页面 */
+        reg.addEventListener("updatefound", function () {
+          var nw = reg.installing;
+          if (!nw) return;
+          nw.addEventListener("statechange", function () {
+            if (nw.state === "installed" && navigator.serviceWorker.controller) {
+              toast("有新版本，请下拉刷新一次");
+            }
+          });
+        });
+      }).catch(function () { /* ignore */ });
     }
   }
 

@@ -16,10 +16,24 @@ var path = require("path");
 var ROOT = path.resolve(__dirname, "..");
 var DATA_FILE = path.join(ROOT, "data", "lottery.json");
 var MODEL_FILE = path.join(ROOT, "data", "model.json");
-var WINDOW = 100;
-var TRAIN_N = 100;
-var ROUNDS = 3;
-var CANDS = [0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3];
+/*
+ * 双色球与大乐透各自独立训练，参数分开配置。
+ * 窗口/训练期数可以分别调，互不影响。
+ */
+var TRAIN_CONFIG = {
+  ssq: {
+    window: 100,
+    trainN: 100,
+    rounds: 3,
+    cands: [0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3],
+  },
+  dlt: {
+    window: 100,
+    trainN: 100,
+    rounds: 3,
+    cands: [0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3],
+  },
+};
 
 require(path.join(ROOT, "assets", "core.js"));
 require(path.join(ROOT, "assets", "clusters.js"));
@@ -36,23 +50,24 @@ function readJson(file, fallback) {
 
 function trainGame(gid, data, prev) {
   var g = C.GAMES[gid];
+  var cfg = TRAIN_CONFIG[gid];
   var gameData = data.games && data.games[gid];
-  if (!gameData || !gameData.draws || gameData.draws.length < WINDOW + 10) return prev;
+  if (!gameData || !gameData.draws || gameData.draws.length < cfg.window + 10) return prev;
 
   var draws = gameData.draws;
   var k = g.mainCount;
   var poolMin = g.mainMin;
   var size = g.mainMax - g.mainMin + 1;
-  var n = Math.min(TRAIN_N, Math.max(20, draws.length - WINDOW - 2));
+  var n = Math.min(cfg.trainN, Math.max(20, draws.length - cfg.window - 2));
 
   var frames = [];
   for (var i = 0; i < n; i++) {
-    var f = S.makeFrame(g, draws, WINDOW, i);
+    var f = S.makeFrame(g, draws, cfg.window, i);
     if (f) frames.push(f);
   }
   if (frames.length < 20) return prev;
 
-  var opt = S.createOptimizer(frames, k, poolMin, size, { rounds: ROUNDS, cands: CANDS });
+  var opt = S.createOptimizer(frames, k, poolMin, size, { rounds: cfg.rounds, cands: cfg.cands });
   var guard = 0;
   while (!opt.state.finished && guard++ < 500000) opt.stepOne();
   var res = opt.result();
@@ -95,6 +110,7 @@ function trainGame(gid, data, prev) {
     changed: changed,
     trainedAt: new Date().toISOString(),
     basedOnIssue: lastIssue,
+    window: cfg.window,
     history: history,
   };
 }
@@ -106,7 +122,7 @@ function main() {
     return 1;
   }
   var prev = readJson(MODEL_FILE, { version: 1, games: {} });
-  var out = { version: 1, updated: new Date().toISOString(), window: WINDOW, trainN: TRAIN_N, games: {} };
+  var out = { version: 2, updated: new Date().toISOString(), perGame: true, games: {} };
 
   console.log("→ 滚动重训（数据更新于 " + (data.updated || "?") + "）");
   C.GAME_ORDER.forEach(function (gid) {

@@ -49,6 +49,22 @@
 
   var SCHOOL_ORDER = ["trend", "probability", "statistics", "psychology", "game", "futures"];
 
+  /*
+   * 每个彩种独立的调参表。双色球与大乐透不共用任何一项：
+   *   voteK       每个公式给几个号码投票
+   *   shapeWeight 形态在组合排序里的权重（其余给票数）
+   *   poolSize    参与组合枚举的候选号码数
+   *   specialPool 特殊号区的候选数
+   */
+  var TUNING = {
+    ssq: { voteK: 3, shapeWeight: 0.30, poolSize: 20, specialPool: 12, minDiff: 2 },
+    dlt: { voteK: 3, shapeWeight: 0.30, poolSize: 20, specialPool: 12, minDiff: 2 },
+  };
+
+  function tuningOf(gameId) {
+    return TUNING[gameId] || { voteK: 3, shapeWeight: 0.3, poolSize: 20, specialPool: 12, minDiff: 2 };
+  }
+
   /* ==================== 注册表 ==================== */
 
   var REGISTRY = {
@@ -94,8 +110,8 @@
   /* ==================== 单目标投票 ==================== */
 
   function voteK(area) {
-    /* 每个公式给最看好的前几个号码各投 1 票 */
-    if (area.pool.length <= 20) return 3;
+    /* 特殊号池小，用该彩种配置的固定票数；主号区按池大小微调 */
+    if (area.pool.length <= 20) return tuningOf(area.gameId).voteK;
     return Math.max(3, Math.min(4, Math.round(area.pool.length / 11)));
   }
 
@@ -251,6 +267,7 @@
       scoreMap[sorted[i].n] = sorted[i].score;
     }
     var sumMid = area && area.sumSeries.length ? C.median(area.sumSeries) : 0;
+    var shapeW = area ? tuningOf(area.gameId).shapeWeight : 0.3;
     var all = [];
 
     C.eachCombination(candNums, k, function (comb) {
@@ -262,7 +279,7 @@
         votes: votes,
         score: score,
         shape: shape,
-        adjusted: votes * (0.7 + 0.3 * shape),
+        adjusted: votes * ((1 - shapeW) + shapeW * shape),
       });
     });
 
@@ -297,8 +314,9 @@
     var mainEval = evaluate(ctx, "main", weights);
     var specEval = ctx.game.specialCount > 0 ? evaluate(ctx, "special", weights) : null;
 
-    var mainSets = pickSets(mainEval.sorted, ctx.game.mainCount, 20, 2, mainEval.area);
-    var specSets = specEval ? pickSets(specEval.sorted, ctx.game.specialCount, 12, 1, specEval.area) : null;
+    var cfg = tuningOf(ctx.gameId);
+    var mainSets = pickSets(mainEval.sorted, ctx.game.mainCount, cfg.poolSize, cfg.minDiff, mainEval.area);
+    var specSets = specEval ? pickSets(specEval.sorted, ctx.game.specialCount, cfg.specialPool, 1, specEval.area) : null;
 
     var pickMain = mainSets.primary;
     var pickSpec = specSets ? specSets.primary : [];
