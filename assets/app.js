@@ -22,6 +22,7 @@
     showAllVotes: false,
     modelData: null,
     extreme: null,
+    relations: null,
     multi: null,
     wheel: null,
     track: null,
@@ -498,6 +499,71 @@
       "</div>";
   }
 
+  /* ---------- 号码关系 ---------- */
+  function loadRelations() {
+    fetch("data/relations.json?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { if (j) { state.relations = j; renderRelations(); } })
+      .catch(function () {});
+  }
+
+  function renderRelations() {
+    var body = $("relBody");
+    var meta = $("relMeta");
+    if (!body) return;
+    var all = state.relations;
+    var r = all && all.games && all.games[state.game];
+    if (!r) {
+      if (meta) meta.textContent = "—";
+      body.innerHTML = '<div class="muted">数据生成中…</div>';
+      return;
+    }
+    var g = C.GAMES[state.game];
+    if (meta) meta.textContent = r.n + " 期统计";
+
+    function row(label, hit, base, unit) {
+      var diff = hit - base;
+      var cls = Math.abs(diff) < 1.5 ? "" : (diff > 0 ? "ok" : "bad");
+      return '<div class="rel-row"><span class="rel-k">' + label + "</span>" +
+        '<span class="rel-v ' + cls + '">' + hit + (unit || "%") + "</span>" +
+        '<span class="rel-b">随机 ' + base + (unit || "%") + "</span></div>";
+    }
+
+    var html = '<div class="rel-list">' +
+      row("邻号：上期出 X → 下期出 X±1", r.near.hit, r.near.base) +
+      row("斜连：X + X±1 → X±2", r.diag.hit, r.diag.base) +
+      "</div>";
+
+    html += '<div class="rel-sub">共现最强的 5 对（lift = 实际/期望，1.00 表示两号毫无关系）</div>' +
+      '<div class="rel-pairs">' +
+      r.pairs.map(function (p) {
+        return '<div class="rel-pair"><span class="rel-pn">' + two(p.a) + " · " + two(p.b) +
+          "</span><span>同出 " + p.c + ' 次</span><span class="rel-lift">' + p.lift.toFixed(2) + "</span></div>";
+      }).join("") + "</div>";
+
+    html += '<div class="rel-sub">质数个数分布</div><div class="rel-bars">' +
+      r.primes.map(function (x) {
+        var pct = x.c / r.n * 100;
+        return '<div class="rel-bar"><span>' + x.n + ' 个</span><i style="width:' +
+          Math.max(2, pct / 45 * 100) + '%"></i><b>' + pct.toFixed(0) + "%</b></div>";
+      }).join("") + "</div>";
+
+    html += '<div class="rel-sub">和值</div><div class="rel-sums">' +
+      "<span>p10 <b>" + r.sums.p10 + "</b></span>" +
+      "<span>中位 <b>" + r.sums.median + "</b></span>" +
+      "<span>p90 <b>" + r.sums.p90 + "</b></span></div>";
+
+    var verdict = (r.near.hit < r.near.base && r.diag.hit <= r.diag.base + 0.5)
+      ? "邻号与斜连都<span class='bad'>不高于</span>随机基准——「邻号回补」「斜连延伸」这类说法在 " +
+        r.n + " 期数据里不成立。共现最强的一对 lift 也只有 " + r.pairs[0].lift.toFixed(2) +
+        "，属于随机波动。"
+      : "部分关系略高于随机，但幅度很小，是否可延续需要样本外验证。";
+
+    html += '<p class="warn" style="margin-top:12px">' + verdict + "</p>";
+
+    body.innerHTML = html;
+  }
+
   /* ---------- 极限模式 ---------- */
   function renderExtreme() {
     var body = $("extremeBody");
@@ -821,6 +887,7 @@
     renderPick();
     renderVotes();
     renderTrend();
+    renderRelations();
     renderExtreme();
     renderWheel();
     renderModel();
@@ -850,6 +917,7 @@
     loadData();
     loadModel();
     loadExtreme();
+    loadRelations();
     loadTrack();
     setInterval(loadData, REFRESH_MS);
     setInterval(loadTrack, REFRESH_MS);
