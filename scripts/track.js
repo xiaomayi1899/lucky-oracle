@@ -77,6 +77,10 @@ function recommendFor(gid, draws, model) {
   var w = model && model.games && model.games[gid] ? model.games[gid].weights : null;
   var rec = S.recommend(ctx, { weights: w });
   var mm = model && model.games && model.games[gid];
+  if (mm && mm.race && mm.race.champion && mm.race.champion.id !== "__weights__") {
+    var ch = S.recommendByChampion(ctx, mm.race.champion.id);
+    if (ch && ch.picks && ch.picks.length) rec.main.primary = ch.picks;
+  }
   if (mm && mm.specialPick && mm.specialPick.length && rec.special) {
     rec.special.primary = mm.specialPick.slice();
   }

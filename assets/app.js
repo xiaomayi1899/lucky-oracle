@@ -98,9 +98,16 @@
         ? state.modelData.games[state.game].weights : null;
       state.rec = S.recommend(state.ctx, { weights: mw });
       var mm2 = state.modelData && state.modelData.games && state.modelData.games[state.game];
-      /* 主区：用训练权重投票（训练集最高），冠军方法仅作参考展示 */
+      /* 主区：严格跟随竞赛冠军——单公式冠军则用它选号，权重投票冠军则保持当前 rec */
       if (mm2 && mm2.race && mm2.race.champion) {
         state.rec.main.champion = mm2.race.champion;
+        if (mm2.race.champion.id !== "__weights__") {
+          var ch = S.recommendByChampion(state.ctx, mm2.race.champion.id);
+          if (ch && ch.picks && ch.picks.length) {
+            state.rec.main.primary = ch.picks;
+            state.rec.main.championPicks = ch.picks;
+          }
+        }
       }
       /* 特殊号：用训练出的高频号覆盖 */
       if (mm2 && mm2.specialPick && mm2.specialPick.length && state.rec.special) {
@@ -766,8 +773,13 @@
         '<div class="bt-cell"><div class="v ' + (sAny > sAnyBase ? "ok" : "") + '">' + sAny.toFixed(1) + '%</div><div class="k">至少中 1 个（随机 ' + sAnyBase.toFixed(1) + '%）</div></div>' +
         '<div class="bt-cell"><div class="v ' + (sFull > sFullBase ? "ok" : "") + '">' + sFull.toFixed(1) + '%</div><div class="k">全中（随机 ' + sFullBase.toFixed(1) + '%）</div></div>' +
         "</div>" +
-        '<div class="muted" style="margin-bottom:10px">' + esc(g.specialLabel) + "从最近 100 期出现频次最高的号里取，" +
-        "至少中 1 个的概率 " + sAny.toFixed(1) + "%（随机 " + sAnyBase.toFixed(1) + "%），" +
+        '<div class="muted" style="margin-bottom:10px">' +
+        (mm.specialChampion
+          ? "后区由方法竞赛选出：<b>" + esc(mm.specialChampion.name) + "</b>（" +
+            (mm.specialRanking ? mm.specialRanking.length : 5) + " 种策略中胜出，训练集至少中 1 个 " +
+            (mm.specialChampion.any * 100).toFixed(1) + "%）。"
+          : "") +
+        "实测至少中 1 个 " + sAny.toFixed(1) + "%（随机 " + sAnyBase.toFixed(1) + "%），" +
         "全中 " + sFull.toFixed(1) + "%（随机 " + sFullBase.toFixed(1) + "%）。</div>";
     }
 
@@ -781,8 +793,12 @@
     if (mm.history && mm.history.length) {
       html += '<div class="bt-rows" style="margin-top:10px">';
       mm.history.slice(-5).reverse().forEach(function (h) {
+        var champ = h.mainChampion
+          ? esc(h.mainChampion) + " " + (h.mainChampionHit || 0).toFixed(2)
+          : "训练 " + h.trainN + " 期";
         html += '<div class="bt-row"><span class="iss">' + esc(String(h.issue).slice(-6)) + "</span>" +
-          '<span class="nums dim">训练 ' + h.trainN + " 期 · 调整 " + h.changed + " 个</span>" +
+          '<span class="nums dim">' + champ +
+          (h.specialChampion ? " · 后区 " + esc(h.specialChampion) : "") + "</span>" +
           '<span class="hit">' + h.trainHit.toFixed(2) + "</span></div>";
       });
       html += "</div>";

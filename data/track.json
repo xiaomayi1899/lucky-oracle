@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-16T08:49:24.283Z",
+ "updated": "2026-11-16T08:53:00.712Z",
  "games": {
   "ssq": {
    "records": [
@@ -1327,11 +1327,11 @@
    ],
    "pending": {
     "pick": [
-     1,
      4,
      13,
+     14,
+     22,
      24,
-     30,
      32
     ],
     "special": [
@@ -1354,10 +1354,10 @@
     "trainedOn": "2026131",
     "forIssue": "2026132",
     "basedOnIssue": "2026131",
-    "generatedAt": "2026-11-16T08:49:24.240Z"
+    "generatedAt": "2026-11-16T08:53:00.648Z"
    },
    "lastHash": "fd26e69e91e87363",
-   "updated": "2026-11-16T08:49:24.240Z"
+   "updated": "2026-11-16T08:53:00.649Z"
   },
   "dlt": {
    "records": [
@@ -2691,7 +2691,7 @@
      30
     ],
     "special": [
-     7,
+     12,
      9
     ],
     "alt": [
@@ -2711,10 +2711,10 @@
     "trainedOn": "26130",
     "forIssue": "26131",
     "basedOnIssue": "26130",
-    "generatedAt": "2026-11-16T08:49:24.283Z"
+    "generatedAt": "2026-11-16T08:53:00.712Z"
    },
    "lastHash": "5e70be57b9c9f662",
-   "updated": "2026-11-16T08:49:24.283Z"
+   "updated": "2026-11-16T08:53:00.712Z"
   }
  }
 }

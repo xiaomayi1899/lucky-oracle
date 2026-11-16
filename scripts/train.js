@@ -54,7 +54,7 @@ function readJson(file, fallback) {
  * 方法竞赛：把所有主区公式各自单独在最近 N 期上跑一遍，
  * 取命中率最高的那个作为冠军方法，下一期只用它选号。
  */
-function raceGame(gid, data, cfg) {
+function raceGame(gid, data, cfg, trainedWeights) {
   var g = C.GAMES[gid];
   var gameData = data.games && data.games[gid];
   if (!gameData || !gameData.draws) return null;
@@ -90,7 +90,25 @@ function raceGame(gid, data, cfg) {
       id: m.id, name: m.name, school: m.school,
       avg: totals[i] / n,
     };
-  }).sort(function (a, b) { return b.avg - a.avg || a.id.localeCompare(b.id); });
+  });
+
+  /* 把「训练权重投票」也放进竞赛 */
+  if (trainedWeights && Object.keys(trainedWeights).length) {
+    var wTotal = 0, wn = 0;
+    for (var wi = 0; wi < N; wi++) {
+      if (wi + 1 + 20 > draws.length) break;
+      var wctx = C.buildContext(g, draws.slice(wi + 1), cfg.window);
+      var wrec = S.recommend(wctx, { weights: trainedWeights });
+      wTotal += S.hitCount(wrec.main.primary, draws[wi][g.keyMain] || []);
+      wn++;
+    }
+    rows.push({
+      id: "__weights__", name: "训练权重投票", school: "ensemble",
+      avg: wn ? wTotal / wn : 0,
+    });
+  }
+
+  rows.sort(function (a, b) { return b.avg - a.avg || a.id.localeCompare(b.id); });
 
   return {
     n: n,
@@ -135,6 +153,86 @@ function extremeSearch(frames, F, k, poolMin, size, trials) {
   return { weights: best, score: bestScore, rounds: rounds };
 }
 
+/*
+ * 后区方法竞赛：几种完全不同的策略都在最近 N 期上跑一遍，取命中最高的那个。
+ * 不再写死「谁出现最多就选谁」。
+ */
+var SPECIAL_STRATEGIES = [
+  { id: "hot100", name: "最近100期最高频" },
+  { id: "hot50", name: "最近50期最高频" },
+  { id: "hot20", name: "最近20期最高频" },
+  { id: "cold", name: "遗漏最长（冷号回补）" },
+  { id: "formula", name: "公式投票" },
+];
+
+function specialPicks(gid, draws, strategyId, windowSize) {
+  var g = C.GAMES[gid];
+  var n = Math.min(windowSize, draws.length);
+  var cnt = {}, omit = {};
+  var lastSeen = {};
+  for (var v = g.specialMin; v <= g.specialMax; v++) { cnt[v] = 0; omit[v] = 0; lastSeen[v] = -1; }
+  for (var i = 0; i < n; i++) {
+    var cur = draws[i][g.keySpecial] || [];
+    for (var j = 0; j < cur.length; j++) {
+      cnt[cur[j]] = (cnt[cur[j]] || 0) + 1;
+      if (lastSeen[cur[j]] < 0) lastSeen[cur[j]] = i;
+    }
+  }
+  for (var v2 = g.specialMin; v2 <= g.specialMax; v2++) {
+    omit[v2] = lastSeen[v2] < 0 ? n : lastSeen[v2];
+  }
+
+  var pool = [];
+  for (var v3 = g.specialMin; v3 <= g.specialMax; v3++) pool.push(v3);
+
+  if (strategyId === "formula") {
+    var ctx = C.buildContext(g, draws, windowSize);
+    var ev = S.evaluate(ctx, "special", null);
+    if (ev && ev.sorted) return ev.sorted.slice(0, g.specialCount).map(function (x) { return x.n; });
+    return [];
+  }
+
+  var rows;
+  if (strategyId === "cold") {
+    rows = pool.map(function (v) { return { n: v, s: omit[v] }; });
+  } else {
+    rows = pool.map(function (v) { return { n: v, s: cnt[v] }; });
+  }
+  rows.sort(function (a, b) { return b.s - a.s || a.n - b.n; });
+  return rows.slice(0, g.specialCount).map(function (x) { return x.n; });
+}
+
+function raceSpecial(gid, data, cfg) {
+  var g = C.GAMES[gid];
+  var gameData = data.games && data.games[gid];
+  if (!gameData || !gameData.draws) return null;
+  var draws = gameData.draws;
+  var N = Math.min(cfg.trainN, Math.max(20, draws.length - cfg.window - 2));
+  var res = SPECIAL_STRATEGIES.map(function (st) {
+    var any = 0, full = 0, n = 0;
+    for (var i = 0; i < N; i++) {
+      if (i + 1 + 20 > draws.length) break;
+      var history = draws.slice(i + 1);
+      var win = st.id === "hot50" ? 50 : (st.id === "hot20" ? 20 : (st.id === "formula" ? cfg.window : 100));
+      var pick = specialPicks(gid, history, st.id, win);
+      if (!pick.length) continue;
+      var actual = draws[i][g.keySpecial] || [];
+      var hit = S.hitCount(pick, actual);
+      if (hit > 0) any++;
+      if (hit === g.specialCount) full++;
+      n++;
+    }
+    return {
+      id: st.id, name: st.name, n: n,
+      any: n ? any / n : 0,
+      full: n ? full / n : 0,
+      score: n ? (any * 0.7 + full * 3) / n : 0,
+    };
+  }).sort(function (a, b) { return b.score - a.score || b.any - a.any; });
+
+  return { n: N, candidates: SPECIAL_STRATEGIES.length, champion: res[0], ranking: res };
+}
+
 function trainGame(gid, data, prev) {
   var g = C.GAMES[gid];
   var cfg = TRAIN_CONFIG[gid];
@@ -168,17 +266,13 @@ function trainGame(gid, data, prev) {
     if (Math.abs(w - 1) > 1e-9) weights[res.modelIds[j]] = w;
   }
 
-  /* 特殊号：用最近 100 期出现频次训练，而不是公式投票。
-     实测双色球蓝球从 7% 提到 11%，大乐透后区保持 36%。 */
-  var freq = {};
+  /* 特殊号：由方法竞赛选出冠军策略，再用该策略生成下一期的号 */
+  var srace = raceSpecial(gid, data, cfg);
+  var specPickWin = srace
+    ? (srace.champion.id === "hot50" ? 50 : (srace.champion.id === "hot20" ? 20 : cfg.window))
+    : cfg.window;
+  var specialPick = specialPicks(gid, draws, srace ? srace.champion.id : "hot100", specPickWin);
   var windowDraws = draws.slice(0, Math.min(cfg.window, draws.length));
-  windowDraws.forEach(function (d) {
-    (d[g.keySpecial] || []).forEach(function (v) { freq[v] = (freq[v] || 0) + 1; });
-  });
-  var specSorted = Object.keys(freq)
-    .map(function (k) { return { n: Number(k), c: freq[k] }; })
-    .sort(function (a, b) { return b.c - a.c || a.n - b.n; });
-  var specialPick = specSorted.slice(0, g.specialCount).map(function (x) { return x.n; });
 
   /* 特殊号命中率：至少中 1 个 / 全中，并给出精确随机基准 */
   function combNum(n, kk) {
@@ -227,9 +321,14 @@ function trainGame(gid, data, prev) {
   console.log("    " + gid + " " + g.specialLabel + " " + specialPick.join(",") +
     "：至少中1个 " + (specRate * 100).toFixed(1) + "%（随机 " + (randAny * 100).toFixed(1) +
     "%）| 全中 " + (specFullRate * 100).toFixed(1) + "%（随机 " + (randFull * 100).toFixed(1) + "%）");
+  if (srace) {
+    console.log("    " + gid + " 后区冠军策略：" + srace.champion.name +
+      "（至少中1 " + (srace.champion.any * 100).toFixed(1) + "%，从 " + srace.candidates + " 种策略中选出）");
+  }
 
   return {
     weights: weights,
+    _specialChampion: srace ? srace.champion : null,
     trainN: frames.length,
     baseHit: Math.round(base * 1000) / 1000,
     trainHit: Math.round(tuned * 1000) / 1000,
@@ -238,6 +337,8 @@ function trainGame(gid, data, prev) {
     basedOnIssue: lastIssue,
     window: cfg.window,
     specialPick: specialPick,
+    specialChampion: srace ? srace.champion : null,
+    specialRanking: srace ? srace.ranking : [],
     specialHit: Math.round(specRate * 1000) / 1000,
     specialFull: Math.round(specFullRate * 1000) / 1000,
     specialBase: Math.round(randAny * 1000) / 1000,
@@ -258,10 +359,19 @@ function main() {
   console.log("→ 滚动重训（数据更新于 " + (data.updated || "?") + "）");
   C.GAME_ORDER.forEach(function (gid) {
     var old = (prev.games && prev.games[gid]) || null;
-    var race = raceGame(gid, data, TRAIN_CONFIG[gid]);
     var res = trainGame(gid, data, old);
+    var race = raceGame(gid, data, TRAIN_CONFIG[gid], res ? res.weights : null);
     if (res) {
       if (race) res.race = race;
+      /* 把本期冠军写进历史，便于观察冠军是否会换人 */
+      if (res.history && res.history.length) {
+        var last = res.history[res.history.length - 1];
+        last.mainChampion = race && race.champion ? race.champion.name : "";
+        last.mainChampionHit = race && race.champion ? Math.round(race.champion.avg * 1000) / 1000 : 0;
+        last.specialChampion = res._specialChampion ? res._specialChampion.name : "";
+        last.specialChampionAny = res._specialChampion ? Math.round(res._specialChampion.any * 1000) / 1000 : 0;
+      }
+      delete res._specialChampion;
       out.games[gid] = res;
     }
   });
