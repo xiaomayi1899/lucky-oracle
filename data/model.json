@@ -1,6 +1,6 @@
 {
  "version": 2,
- "updated": "2026-11-16T11:00:06.660Z",
+ "updated": "2026-11-16T20:49:33.853Z",
  "perGame": true,
  "games": {
   "ssq": {
@@ -51,7 +51,7 @@
    "baseHit": 1.06,
    "trainHit": 1.36,
    "changed": 41,
-   "trainedAt": "2026-11-16T11:00:11.482Z",
+   "trainedAt": "2026-11-16T20:49:36.228Z",
    "basedOnIssue": "2026131",
    "window": 100,
    "specialPick": [
@@ -211,32 +211,32 @@
     "dlt_f_grey": 17.38
    },
    "trainN": 100,
-   "baseHit": 0.61,
-   "trainHit": 0.94,
+   "baseHit": 0.6,
+   "trainHit": 0.95,
    "changed": 36,
-   "trainedAt": "2026-11-16T11:00:28.112Z",
-   "basedOnIssue": "26130",
+   "trainedAt": "2026-11-16T20:49:46.311Z",
+   "basedOnIssue": "26131",
    "window": 100,
    "specialPick": [
-    12,
-    9
+    7,
+    4
    ],
    "specialChampion": {
     "id": "formula",
     "name": "公式投票",
     "n": 100,
-    "any": 0.33,
+    "any": 0.32,
     "full": 0.01,
-    "score": 0.26099999999999995
+    "score": 0.254
    },
    "specialRanking": [
     {
      "id": "formula",
      "name": "公式投票",
      "n": 100,
-     "any": 0.33,
+     "any": 0.32,
      "full": 0.01,
-     "score": 0.26099999999999995
+     "score": 0.254
     },
     {
      "id": "cold",
@@ -271,7 +271,7 @@
      "score": 0.16099999999999998
     }
    ],
-   "specialHit": 0.36,
+   "specialHit": 0.37,
    "specialFull": 0.04,
    "specialBase": 0.318,
    "specialFullBase": 0.015,
@@ -288,6 +288,19 @@
      "mainChampionHit": 0.83,
      "specialChampion": "公式投票",
      "specialChampionAny": 0.33
+    },
+    {
+     "issue": "26131",
+     "date": "2026-11-16",
+     "trainN": 100,
+     "baseHit": 0.6,
+     "trainHit": 0.95,
+     "changed": 36,
+     "trainedAt": "2026-11-16T20:49:46.310Z",
+     "mainChampion": "训练权重投票",
+     "mainChampionHit": 0.83,
+     "specialChampion": "公式投票",
+     "specialChampionAny": 0.32
     }
    ],
    "race": {
@@ -314,25 +327,25 @@
       "avg": 0.82
      },
      {
-      "id": "dlt_t_tail",
-      "name": "同尾走势",
-      "school": "trend",
-      "avg": 0.78
-     },
-     {
       "id": "dlt_g_pareto",
       "name": "帕累托组合",
       "school": "game",
-      "avg": 0.77
+      "avg": 0.78
      },
      {
-      "id": "dlt_p_multi",
-      "name": "多项分布似然",
-      "school": "probability",
-      "avg": 0.77
+      "id": "dlt_psy_anchor",
+      "name": "锚定效应",
+      "school": "psychology",
+      "avg": 0.78
+     },
+     {
+      "id": "dlt_psy_herd",
+      "name": "从众效应",
+      "school": "psychology",
+      "avg": 0.78
      }
     ],
-    "worst": 0.54
+    "worst": 0.53
    }
   }
  }
