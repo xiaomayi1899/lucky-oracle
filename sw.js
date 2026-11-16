@@ -1,5 +1,5 @@
 /* 数理投票 Service Worker：应用壳离线可用，开奖数据网络优先 */
-const VERSION = "2026.11.16.8";
+const VERSION = "2026.11.16.9";
 const SHELL_CACHE = `shell-${VERSION}`;
 const DATA_CACHE = `data-${VERSION}`;
 
@@ -67,7 +67,7 @@ self.addEventListener("activate", (event) => {
 });
 
 function isDataRequest(url) {
-  return url.pathname.endsWith("/data/lottery.json") || url.pathname.endsWith("/data/track.json") || url.pathname.endsWith("/data/model.json");
+  return url.pathname.endsWith("/data/lottery.json") || url.pathname.endsWith("/data/track.json") || url.pathname.endsWith("/data/model.json") || url.pathname.endsWith("/data/extreme.json");
 }
 
 async function networkFirst(request, cacheName, cacheKey) {

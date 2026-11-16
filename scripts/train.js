@@ -48,6 +48,60 @@ function readJson(file, fallback) {
   try { return JSON.parse(fs.readFileSync(file, "utf8")); } catch (e) { return fallback; }
 }
 
+/*
+ * 方法竞赛：把所有主区公式各自单独在最近 N 期上跑一遍，
+ * 取命中率最高的那个作为冠军方法，下一期只用它选号。
+ */
+function raceGame(gid, data, cfg) {
+  var g = C.GAMES[gid];
+  var gameData = data.games && data.games[gid];
+  if (!gameData || !gameData.draws) return null;
+  var draws = gameData.draws;
+  var models = S.modelsOf(gid, "main");
+  var k = g.mainCount;
+  var N = Math.min(cfg.trainN, Math.max(20, draws.length - cfg.window - 2));
+  var totals = new Array(models.length).fill(0);
+  var n = 0;
+
+  for (var i = 0; i < N; i++) {
+    if (i + 1 + 20 > draws.length) break;
+    var ctx = C.buildContext(g, draws.slice(i + 1), cfg.window);
+    var area = ctx.main;
+    var actual = draws[i][g.keyMain] || [];
+    for (var mi = 0; mi < models.length; mi++) {
+      var sc = [];
+      for (var j = 0; j < area.pool.length; j++) {
+        var v = area.pool[j], sv = 0;
+        try { sv = Number(models[mi].score(ctx, area, v)) || 0; } catch (e) { sv = 0; }
+        sc.push({ v: v, s: sv });
+      }
+      sc.sort(function (a, b) { return b.s - a.s || a.v - b.v; });
+      var hit = 0;
+      for (var q = 0; q < k; q++) if (actual.indexOf(sc[q].v) >= 0) hit++;
+      totals[mi] += hit;
+    }
+    n++;
+  }
+
+  var rows = models.map(function (m, i) {
+    return {
+      id: m.id, name: m.name, school: m.school,
+      avg: totals[i] / n,
+    };
+  }).sort(function (a, b) { return b.avg - a.avg || a.id.localeCompare(b.id); });
+
+  return {
+    n: n,
+    candidates: models.length,
+    randomBase: k * k / g.mainMax,
+    champion: rows[0],
+    ranking: rows.slice(0, 5).map(function (r) {
+      return { id: r.id, name: r.name, school: r.school, avg: Math.round(r.avg * 1000) / 1000 };
+    }),
+    worst: rows[rows.length - 1].avg,
+  };
+}
+
 function trainGame(gid, data, prev) {
   var g = C.GAMES[gid];
   var cfg = TRAIN_CONFIG[gid];
@@ -151,8 +205,12 @@ function main() {
   console.log("→ 滚动重训（数据更新于 " + (data.updated || "?") + "）");
   C.GAME_ORDER.forEach(function (gid) {
     var old = (prev.games && prev.games[gid]) || null;
+    var race = raceGame(gid, data, TRAIN_CONFIG[gid]);
     var res = trainGame(gid, data, old);
-    if (res) out.games[gid] = res;
+    if (res) {
+      if (race) res.race = race;
+      out.games[gid] = res;
+    }
   });
 
   fs.mkdirSync(path.dirname(MODEL_FILE), { recursive: true });
@@ -163,6 +221,10 @@ function main() {
     if (!m) return;
     console.log("  " + gid + "：权重 " + Object.keys(m.weights).length +
       " 条，训练命中 " + m.trainHit + "（原始 " + m.baseHit + "），基于 " + m.basedOnIssue + " 期");
+    if (m.race) {
+      console.log("    冠军方法：" + m.race.champion.name + "（" + m.race.champion.avg.toFixed(3) +
+        "，" + m.race.candidates + " 个候选，随机 " + m.race.randomBase.toFixed(3) + "）");
+    }
   });
   return 0;
 }

@@ -418,6 +418,25 @@
     };
   }
 
+  /* 用指定公式（竞赛冠军）直接选号 */
+  function recommendByChampion(ctx, modelId) {
+    var models = modelsOf(ctx.gameId, "main");
+    var m = null, i;
+    for (i = 0; i < models.length; i++) if (models[i].id === modelId) { m = models[i]; break; }
+    if (!m) return null;
+    var area = ctx.main, k = ctx.game.mainCount;
+    var sc = [];
+    for (i = 0; i < area.pool.length; i++) {
+      var v = area.pool[i], sv = 0;
+      try { sv = safeNum(m.score(ctx, area, v)); } catch (e) { sv = 0; }
+      sc.push({ v: v, s: sv });
+    }
+    sc.sort(function (a, b) { return b.s - a.s || a.v - b.v; });
+    var picks = sc.slice(0, k).map(function (x) { return x.v; })
+      .sort(function (a, b) { return a - b; });
+    return { picks: picks, modelId: m.id, modelName: m.name, school: m.school };
+  }
+
   /* ==================== 缩水矩阵（覆盖设计） ==================== */
 
   function combinations(n, k) {
@@ -856,6 +875,7 @@
     evaluate: evaluate,
     recommend: recommend,
     recommendMulti: recommendMulti,
+    recommendByChampion: recommendByChampion,
     buildWheel: buildWheel,
     pickSets: pickSets,
     backtest: backtest,

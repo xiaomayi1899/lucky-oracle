@@ -361,3 +361,21 @@ body[data-game="dlt"] .wtag { background: rgba(226, 129, 42, .14); border-color:
 .multi-row .idx { width: 18px; height: 18px; display: grid; place-items: center; border-radius: 5px; background: var(--card2); color: var(--muted); font-size: 10px; font-weight: 700; flex: 0 0 auto; }
 .multi-row .mballs { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
 .multi-note { margin-top: 9px; font-size: 10.5px; color: var(--dim); line-height: 1.6; }
+
+/* 冠军方法 */
+.champ-box { margin: 12px 0; padding: 12px; background: rgba(226, 69, 60, .07); border: 1px solid rgba(226, 69, 60, .25); border-radius: 12px; }
+.champ-label { font-size: 12px; font-weight: 750; color: var(--accent2); letter-spacing: .4px; margin-bottom: 6px; }
+.champ-stats { font-size: 12px; color: var(--muted); line-height: 1.7; }
+.champ-stats b { color: var(--text); }
+.champ-top { font-size: 10.5px; color: var(--dim); margin-top: 5px; }
+body[data-game="dlt"] .champ-box { background: rgba(226, 129, 42, .07); border-color: rgba(226, 129, 42, .25); }
+body[data-game="dlt"] .champ-label { color: var(--accent2); }
+
+/* 极限模式 */
+.ex-table { display: flex; flex-direction: column; gap: 4px; }
+.ex-row { display: grid; grid-template-columns: 1fr 54px 54px; gap: 8px; align-items: center; padding: 7px 8px; background: var(--bg2); border-radius: 8px; font-size: 12px; }
+.ex-head { background: transparent; color: var(--dim); font-size: 10.5px; padding: 2px 8px; }
+.ex-name { display: flex; flex-direction: column; gap: 1px; }
+.ex-name small { font-size: 9.5px; color: var(--dim); }
+.ex-num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }
+.ex-num.ok { color: var(--ok); }

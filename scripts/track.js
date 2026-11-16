@@ -76,8 +76,12 @@ function recommendFor(gid, draws, model) {
   /* 使用训练引擎产出的权重，保证与页面推荐一致 */
   var w = model && model.games && model.games[gid] ? model.games[gid].weights : null;
   var rec = S.recommend(ctx, { weights: w });
-  /* 特殊号使用训练出的高频号，与页面一致 */
   var mm = model && model.games && model.games[gid];
+  /* 主区使用竞赛冠军方法，与页面一致 */
+  if (mm && mm.race && mm.race.champion) {
+    var ch = S.recommendByChampion(ctx, mm.race.champion.id);
+    if (ch && ch.picks && ch.picks.length) rec.main.primary = ch.picks;
+  }
   if (mm && mm.specialPick && mm.specialPick.length && rec.special) {
     rec.special.primary = mm.specialPick.slice();
   }

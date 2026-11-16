@@ -1,6 +1,6 @@
 {
  "version": 2,
- "updated": "2026-11-16T08:18:22.952Z",
+ "updated": "2026-11-16T08:21:07.305Z",
  "perGame": true,
  "games": {
   "ssq": {
@@ -24,7 +24,7 @@
    "baseHit": 1.06,
    "trainHit": 1.27,
    "changed": 14,
-   "trainedAt": "2026-11-16T08:18:23.572Z",
+   "trainedAt": "2026-11-16T08:21:08.147Z",
    "basedOnIssue": "2026131",
    "window": 100,
    "specialPick": [
@@ -42,7 +42,51 @@
      "changed": 14,
      "trainedAt": "2026-11-16T07:51:50.601Z"
     }
-   ]
+   ],
+   "race": {
+    "n": 100,
+    "candidates": 72,
+    "randomBase": 1.0909090909090908,
+    "champion": {
+     "id": "ssq_g_dominant",
+     "name": "占优策略",
+     "school": "game",
+     "avg": 1.32
+    },
+    "ranking": [
+     {
+      "id": "ssq_g_dominant",
+      "name": "占优策略",
+      "school": "game",
+      "avg": 1.32
+     },
+     {
+      "id": "ssq_f_scurve",
+      "name": "S 曲线拟合",
+      "school": "futures",
+      "avg": 1.3
+     },
+     {
+      "id": "ssq_t_hot30",
+      "name": "近三十期热度",
+      "school": "trend",
+      "avg": 1.3
+     },
+     {
+      "id": "ssq_g_anticipate",
+      "name": "二阶预判",
+      "school": "game",
+      "avg": 1.29
+     },
+     {
+      "id": "ssq_g_crowd",
+      "name": "拥挤度反向",
+      "school": "game",
+      "avg": 1.29
+     }
+    ],
+    "worst": 0.91
+   }
   },
   "dlt": {
    "weights": {
@@ -62,7 +106,7 @@
    "baseHit": 0.61,
    "trainHit": 0.82,
    "changed": 11,
-   "trainedAt": "2026-11-16T08:18:24.537Z",
+   "trainedAt": "2026-11-16T08:21:10.064Z",
    "basedOnIssue": "26130",
    "window": 100,
    "specialPick": [
@@ -81,7 +125,51 @@
      "changed": 11,
      "trainedAt": "2026-11-16T07:51:51.817Z"
     }
-   ]
+   ],
+   "race": {
+    "n": 100,
+    "candidates": 73,
+    "randomBase": 0.7142857142857143,
+    "champion": {
+     "id": "dlt_p_geom",
+     "name": "几何回补",
+     "school": "probability",
+     "avg": 0.88
+    },
+    "ranking": [
+     {
+      "id": "dlt_p_geom",
+      "name": "几何回补",
+      "school": "probability",
+      "avg": 0.88
+     },
+     {
+      "id": "dlt_psy_anchor",
+      "name": "锚定效应",
+      "school": "psychology",
+      "avg": 0.88
+     },
+     {
+      "id": "dlt_psy_herd",
+      "name": "从众效应",
+      "school": "psychology",
+      "avg": 0.88
+     },
+     {
+      "id": "dlt_t_repeat",
+      "name": "上期重号",
+      "school": "trend",
+      "avg": 0.88
+     },
+     {
+      "id": "dlt_f_grey",
+      "name": "灰色预测 GM(1,1)",
+      "school": "futures",
+      "avg": 0.83
+     }
+    ],
+    "worst": 0.56
+   }
   }
  }
 }

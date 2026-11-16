@@ -21,6 +21,7 @@
     trendTarget: "main",
     showAllVotes: false,
     modelData: null,
+    extreme: null,
     multi: null,
     wheel: null,
     track: null,
@@ -95,8 +96,16 @@
       var mw = state.modelData && state.modelData.games && state.modelData.games[state.game]
         ? state.modelData.games[state.game].weights : null;
       state.rec = S.recommend(state.ctx, { weights: mw });
-      /* 特殊号用训练出的高频号覆盖 */
       var mm2 = state.modelData && state.modelData.games && state.modelData.games[state.game];
+      /* 主区：用竞赛冠军方法直接选号 */
+      if (mm2 && mm2.race && mm2.race.champion) {
+        var ch = S.recommendByChampion(state.ctx, mm2.race.champion.id);
+        if (ch && ch.picks && ch.picks.length) {
+          state.rec.main.champion = ch;
+          state.rec.main.primary = ch.picks;
+        }
+      }
+      /* 特殊号：用训练出的高频号覆盖 */
       if (mm2 && mm2.specialPick && mm2.specialPick.length && state.rec.special) {
         state.rec.special.primary = mm2.specialPick.slice();
       }
@@ -303,6 +312,8 @@
 
     var maxV = rec.main.maxVotes || 1;
     html += '<div class="pick-note">' +
+      (rec.main.champion ? "冠军方法「" + esc(rec.main.champion.modelName) + "」直接选号" : "") +
+      (rec.main.champion ? " · " : "") +
       esc(g.mainLabel) + "最高 " + fmtVote(maxV) + " 票 · " + rec.main.modelCount + " 个公式归并成 " +
       rec.main.clusterCount + " 个独立观点，按训练权重合计票数" +
       "，共 " + fmtVote(rec.main.totalVotes) + " 票" +
@@ -484,6 +495,43 @@
       "</div>";
   }
 
+  /* ---------- 极限模式 ---------- */
+  function renderExtreme() {
+    var body = $("extremeBody");
+    var meta = $("extremeMeta");
+    if (!body) return;
+    var e = state.extreme;
+    if (!e || !e[state.game]) {
+      if (meta) meta.textContent = "—";
+      body.innerHTML = '<div class="muted">数据生成中…</div>';
+      return;
+    }
+    var d = e[state.game];
+    var g = C.GAMES[state.game];
+    if (meta) meta.textContent = "训练 " + d.n + " 期 · 检验 " + d.testN + " 期";
+
+    var html = '<div class="ex-table">' +
+      '<div class="ex-row ex-head"><span>方法</span><span>训练集</span><span>样本外</span></div>' +
+      d.strategies.map(function (s) {
+        var test = s.test === null ? "—" : s.test.toFixed(2);
+        var cls = s.test !== null && s.test > d.random + 0.1 ? "ok" : "";
+        return '<div class="ex-row">' +
+          '<span class="ex-name">' + esc(s.name) + '<small>' + esc(s.note) + "</small></span>" +
+          '<span class="ex-num">' + s.train.toFixed(2) + "</span>" +
+          '<span class="ex-num ' + cls + '">' + test + "</span>" +
+          "</div>";
+      }).join("") +
+      "</div>";
+
+    var outBase = d.strategies[0].test;
+    html += '<p class="warn" style="margin-top:10px">看清楚这三列：训练集可以从 ' +
+      d.random.toFixed(2) + " 一路造到 " + d.strategies[3].train.toFixed(1) +
+      "，但样本外那一列全部停在 " + outBase.toFixed(2) + " 附近（±0.1）。" +
+      "任何一个「训练集命中很高」的方案，到了没见过的期数都会回到随机水平。</p>";
+
+    body.innerHTML = html;
+  }
+
   /* ---------- 缩水矩阵 ---------- */
   function renderWheel() {
     var body = $("wheelBody");
@@ -583,6 +631,13 @@
       .catch(function () { /* ignore */ });
   }
 
+  function loadExtreme() {
+    fetch("data/extreme.json?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { if (j) { state.extreme = j; renderExtreme(); } })
+      .catch(function () {});
+  }
+
   function renderModel() {
     var body = $("modelBody");
     var meta = $("modelMeta");
@@ -615,6 +670,17 @@
         '<div class="bt-cell"><div class="v">' + rand.toFixed(2) + '</div><div class="k">随机期望</div></div>' +
         '<div class="bt-cell"><div class="v ' + (diff >= 0 ? "ok" : "bad") + '">' +
           (diff >= 0 ? "+" : "") + diff.toFixed(2) + '</div><div class="k">与随机之差</div></div>' +
+        "</div>";
+    }
+
+    if (mm.race && mm.race.champion) {
+      html += '<div class="champ-box">' +
+        '<div class="champ-label">冠军方法 · ' + esc(mm.race.champion.name) + '</div>' +
+        '<div class="champ-stats">最近 ' + mm.race.n + " 期命中 <b>" + mm.race.champion.avg.toFixed(3) +
+        "</b>（随机 " + mm.race.randomBase.toFixed(3) + "）· 从 " + mm.race.candidates + " 个候选公式中选出</div>" +
+        '<div class="champ-top">前 3 名：' + mm.race.ranking.slice(0, 3).map(function (r) {
+          return esc(r.name) + " " + r.avg.toFixed(2);
+        }).join(" · ") + "</div>" +
         "</div>";
     }
 
@@ -752,6 +818,7 @@
     renderPick();
     renderVotes();
     renderTrend();
+    renderExtreme();
     renderWheel();
     renderModel();
     renderTrack();
@@ -779,6 +846,7 @@
 
     loadData();
     loadModel();
+    loadExtreme();
     loadTrack();
     setInterval(loadData, REFRESH_MS);
     setInterval(loadTrack, REFRESH_MS);
