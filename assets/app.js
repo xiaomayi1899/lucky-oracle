@@ -95,6 +95,11 @@
       var mw = state.modelData && state.modelData.games && state.modelData.games[state.game]
         ? state.modelData.games[state.game].weights : null;
       state.rec = S.recommend(state.ctx, { weights: mw });
+      /* 特殊号用训练出的高频号覆盖 */
+      var mm2 = state.modelData && state.modelData.games && state.modelData.games[state.game];
+      if (mm2 && mm2.specialPick && mm2.specialPick.length && state.rec.special) {
+        state.rec.special.primary = mm2.specialPick.slice();
+      }
       state.multi = null;
       try { state.multi = S.recommendMulti(state.ctx, 5, { weights: mw }); } catch (e) { /* ignore */ }
       state.backtest = null;
@@ -610,6 +615,14 @@
         '<div class="bt-cell"><div class="v">' + rand.toFixed(2) + '</div><div class="k">随机期望</div></div>' +
         '<div class="bt-cell"><div class="v ' + (diff >= 0 ? "ok" : "bad") + '">' +
           (diff >= 0 ? "+" : "") + diff.toFixed(2) + '</div><div class="k">与随机之差</div></div>' +
+        "</div>";
+    }
+
+    if (mm.specialPick && mm.specialPick.length) {
+      html += '<div class="bt-grid">' +
+        '<div class="bt-cell"><div class="v">' + mm.specialPick.map(two).join(" ") + '</div><div class="k">训练出的' + esc(g.specialLabel) + '</div></div>' +
+        '<div class="bt-cell"><div class="v ok">' + ((mm.specialHit || 0) * 100).toFixed(1) + '%</div><div class="k">训练集命中率</div></div>' +
+        '<div class="bt-cell"><div class="v">' + ((mm.specialBase || 0) * 100).toFixed(1) + '%</div><div class="k">随机期望</div></div>' +
         "</div>";
     }
 

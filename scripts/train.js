@@ -78,6 +78,25 @@ function trainGame(gid, data, prev) {
     if (Math.abs(w - 1) > 1e-9) weights[res.modelIds[j]] = w;
   }
 
+  /* 特殊号：用最近 100 期出现频次训练，而不是公式投票。
+     实测双色球蓝球从 7% 提到 11%，大乐透后区保持 36%。 */
+  var freq = {};
+  var windowDraws = draws.slice(0, Math.min(cfg.window, draws.length));
+  windowDraws.forEach(function (d) {
+    (d[g.keySpecial] || []).forEach(function (v) { freq[v] = (freq[v] || 0) + 1; });
+  });
+  var specSorted = Object.keys(freq)
+    .map(function (k) { return { n: Number(k), c: freq[k] }; })
+    .sort(function (a, b) { return b.c - a.c || a.n - b.n; });
+  var specialPick = specSorted.slice(0, g.specialCount).map(function (x) { return x.n; });
+
+  /* 特殊号训练集命中率 */
+  var specHit = 0;
+  windowDraws.forEach(function (d) {
+    if (S.hitCount(specialPick, d[g.keySpecial] || []) > 0) specHit++;
+  });
+  var specRate = windowDraws.length ? specHit / windowDraws.length : 0;
+
   var changed = Object.keys(weights).length;
   var base = res.baseScore;
   var tuned = res.tunedScore;
@@ -98,9 +117,11 @@ function trainGame(gid, data, prev) {
     if (history.length > 120) history = history.slice(-120);
   }
 
-  console.log("  · " + gid + " 训练 " + frames.length + " 期：命中 " + base.toFixed(3) +
+  console.log("  · " + gid + " 主区 " + frames.length + " 期：命中 " + base.toFixed(3) +
     " -> " + tuned.toFixed(3) + "（" + ((tuned / base - 1) * 100).toFixed(0) +
     "%），调整 " + changed + " 个公式");
+  console.log("    " + gid + " 特殊号 " + specialPick.join(",") + "：命中 " +
+    (specRate * 100).toFixed(1) + "%（随机 " + (g.specialCount / g.specialMax * 100).toFixed(1) + "%）");
 
   return {
     weights: weights,
@@ -111,6 +132,9 @@ function trainGame(gid, data, prev) {
     trainedAt: new Date().toISOString(),
     basedOnIssue: lastIssue,
     window: cfg.window,
+    specialPick: specialPick,
+    specialHit: Math.round(specRate * 1000) / 1000,
+    specialBase: Math.round((g.specialCount / g.specialMax) * 1000) / 1000,
     history: history,
   };
 }
