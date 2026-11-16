@@ -1,5 +1,5 @@
 /* 数理投票 Service Worker：应用壳离线可用，开奖数据网络优先 */
-const VERSION = "2026.11.16.3";
+const VERSION = "2026.11.16.4";
 const SHELL_CACHE = `shell-${VERSION}`;
 const DATA_CACHE = `data-${VERSION}`;
 
