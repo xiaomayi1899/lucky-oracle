@@ -25,12 +25,14 @@ var TRAIN_CONFIG = {
     window: 100,
     trainN: 100,
     rounds: 3,
+    trials: 30000,
     cands: [0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3],
   },
   dlt: {
     window: 100,
     trainN: 100,
     rounds: 3,
+    trials: 30000,
     cands: [0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3],
   },
 };
@@ -102,6 +104,37 @@ function raceGame(gid, data, cfg) {
   };
 }
 
+/* 极限搜索：随机撒点 + 局部爬山，把训练集命中压到当前方法的理论上限 */
+function extremeSearch(frames, F, k, poolMin, size, trials) {
+  var seed = 20261117;
+  function rnd() { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; }
+
+  var best = null, bestScore = 0, i, t;
+  for (t = 0; t < trials; t++) {
+    var w = new Array(F);
+    for (i = 0; i < F; i++) w[i] = rnd() < 0.5 ? 1 : Math.exp((rnd() * 2 - 1) * Math.log(20));
+    var sc = S.evalFrames(frames, w, k, poolMin, size);
+    if (sc > bestScore) { bestScore = sc; best = w.slice(); }
+  }
+
+  var improved = true, rounds = 0;
+  while (improved && rounds < 200) {
+    improved = false;
+    rounds++;
+    for (i = 0; i < F; i++) {
+      var orig = best[i];
+      var cands = [orig * 0.7, orig * 1.4, orig * 2, orig * 0.5, 0.01, 5, 10];
+      for (var c = 0; c < cands.length; c++) {
+        best[i] = cands[c];
+        var s2 = S.evalFrames(frames, best, k, poolMin, size);
+        if (s2 > bestScore + 1e-9) { bestScore = s2; improved = true; }
+        else best[i] = orig;
+      }
+    }
+  }
+  return { weights: best, score: bestScore, rounds: rounds };
+}
+
 function trainGame(gid, data, prev) {
   var g = C.GAMES[gid];
   var cfg = TRAIN_CONFIG[gid];
@@ -121,10 +154,13 @@ function trainGame(gid, data, prev) {
   }
   if (frames.length < 20) return prev;
 
-  var opt = S.createOptimizer(frames, k, poolMin, size, { rounds: cfg.rounds, cands: cfg.cands });
-  var guard = 0;
-  while (!opt.state.finished && guard++ < 500000) opt.stepOne();
-  var res = opt.result();
+  var F0 = frames[0].picks.length;
+  var onesArr = new Array(F0);
+  for (var z0 = 0; z0 < F0; z0++) onesArr[z0] = 1;
+  var baseScore = S.evalFrames(frames, onesArr, k, poolMin, size);
+
+  var ex = extremeSearch(frames, F0, k, poolMin, size, cfg.trials || 30000);
+  var res = { modelIds: frames[0].modelIds, weights: ex.weights, baseScore: baseScore, tunedScore: ex.score };
 
   var weights = {};
   for (var j = 0; j < res.modelIds.length; j++) {

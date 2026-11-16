@@ -98,13 +98,9 @@
         ? state.modelData.games[state.game].weights : null;
       state.rec = S.recommend(state.ctx, { weights: mw });
       var mm2 = state.modelData && state.modelData.games && state.modelData.games[state.game];
-      /* 主区：用竞赛冠军方法直接选号 */
+      /* 主区：用训练权重投票（训练集最高），冠军方法仅作参考展示 */
       if (mm2 && mm2.race && mm2.race.champion) {
-        var ch = S.recommendByChampion(state.ctx, mm2.race.champion.id);
-        if (ch && ch.picks && ch.picks.length) {
-          state.rec.main.champion = ch;
-          state.rec.main.primary = ch.picks;
-        }
+        state.rec.main.champion = mm2.race.champion;
       }
       /* 特殊号：用训练出的高频号覆盖 */
       if (mm2 && mm2.specialPick && mm2.specialPick.length && state.rec.special) {
@@ -765,6 +761,7 @@
       (liveAvg === null
         ? "实盘记录还没积累，从下一期开奖开始统计。"
         : "训练集是模型见过的数据，实盘是它没见过的——以实盘为准。") +
+      "实际推荐还叠加了形态约束（和值 p10–p90、连号 ≤1）与重号约束（≤2），所以推荐命中会略低于训练集数字。" +
       "</div>";
 
     if (mm.history && mm.history.length) {

@@ -57,8 +57,8 @@
    *   specialPool 特殊号区的候选数
    */
   var TUNING = {
-    ssq: { voteK: 3, shapeWeight: 0.30, poolSize: 20, specialPool: 12, minDiff: 2 },
-    dlt: { voteK: 3, shapeWeight: 0.30, poolSize: 20, specialPool: 12, minDiff: 2 },
+    ssq: { voteK: 3, shapeWeight: 0.40, poolSize: 24, specialPool: 12, minDiff: 2, maxRepeat: 2 },
+    dlt: { voteK: 3, shapeWeight: 0.40, poolSize: 24, specialPool: 12, minDiff: 2, maxRepeat: 2 },
   };
 
   function tuningOf(gameId) {
@@ -256,7 +256,7 @@
    * 主推荐：组合票数 × (0.8 + 0.2 × 形态分)，票数仍是主导。
    * 备选：与主推荐至少差 minDiff 个号码的次优组合。
    */
-  function pickSets(sorted, k, poolSize, minDiff, area) {
+  function pickSets(sorted, k, poolSize, minDiff, area, maxRepeat) {
     var cand = sorted.slice(0, Math.min(sorted.length, poolSize || 20));
     var candNums = cand.map(function (x) { return x.n; });
 
@@ -267,12 +267,33 @@
       scoreMap[sorted[i].n] = sorted[i].score;
     }
     var sumMid = area && area.sumSeries.length ? C.median(area.sumSeries) : 0;
+    var sumLo = -Infinity, sumHi = Infinity;
+    if (area && area.sumSeries.length > 5) {
+      var ss = area.sumSeries.slice().sort(function (a, b) { return a - b; });
+      sumLo = ss[Math.floor(ss.length * 0.10)];
+      sumHi = ss[Math.floor(ss.length * 0.90)];
+    }
     var shapeW = area ? tuningOf(area.gameId).shapeWeight : 0.3;
     var all = [];
 
+    var prevSet = area && area.last ? area.last : null;
+    var cap = maxRepeat === undefined ? 2 : maxRepeat;
+
     C.eachCombination(candNums, k, function (comb) {
-      var votes = 0, score = 0, j;
-      for (j = 0; j < k; j++) { votes += voteMap[comb[j]] || 0; score += scoreMap[comb[j]] || 0; }
+      var votes = 0, score = 0, j, rep = 0;
+      for (j = 0; j < k; j++) {
+        votes += voteMap[comb[j]] || 0;
+        score += scoreMap[comb[j]] || 0;
+        if (prevSet && prevSet.indexOf(comb[j]) >= 0) rep++;
+      }
+      /* 硬约束：与上期重号不超过 cap 个，避免整期复制 */
+      if (prevSet && rep > cap) return;
+      /* 硬约束：和值落在历史 p10–p90，避免极端组合 */
+      if (area && area.sumSeries.length) {
+        var sm = 0;
+        for (j = 0; j < k; j++) sm += comb[j];
+        if (sm < sumLo || sm > sumHi) return;
+      }
       var shape = area ? shapeScore(area, comb, sumMid) : 0.5;
       all.push({
         nums: comb.slice().sort(function (a, b) { return a - b; }),
@@ -315,7 +336,7 @@
     var specEval = ctx.game.specialCount > 0 ? evaluate(ctx, "special", weights) : null;
 
     var cfg = tuningOf(ctx.gameId);
-    var mainSets = pickSets(mainEval.sorted, ctx.game.mainCount, cfg.poolSize, cfg.minDiff, mainEval.area);
+    var mainSets = pickSets(mainEval.sorted, ctx.game.mainCount, cfg.poolSize, cfg.minDiff, mainEval.area, cfg.maxRepeat);
     var specSets = specEval ? pickSets(specEval.sorted, ctx.game.specialCount, cfg.specialPool, 1, specEval.area) : null;
 
     var pickMain = mainSets.primary;
