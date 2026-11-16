@@ -418,6 +418,93 @@
     };
   }
 
+  /* ==================== 缩水矩阵（覆盖设计） ==================== */
+
+  function combinations(n, k) {
+    var out = [], idx = [], i;
+    for (i = 0; i < k; i++) idx.push(i);
+    while (true) {
+      out.push(idx.slice());
+      var p = k - 1;
+      while (p >= 0 && idx[p] === n - k + p) p--;
+      if (p < 0) break;
+      idx[p]++;
+      for (i = p + 1; i < k; i++) idx[i] = idx[i - 1] + 1;
+    }
+    return out;
+  }
+
+  function subCombos(arr, t) {
+    var out = [], idx = [], i;
+    for (i = 0; i < t; i++) idx.push(i);
+    while (true) {
+      var cur = [];
+      for (i = 0; i < t; i++) cur.push(arr[idx[i]]);
+      out.push(cur);
+      var p = t - 1;
+      while (p >= 0 && idx[p] === arr.length - t + p) p--;
+      if (p < 0) break;
+      idx[p]++;
+      for (i = p + 1; i < t; i++) idx[i] = idx[i - 1] + 1;
+    }
+    return out;
+  }
+
+  /*
+   * 缩水矩阵：从 v 个号码里生成一组 k 码注，保证「开奖号码中任意 t 个落在
+   * 这 v 个里」时，至少有一注命中那 t 个。贪心算法，非理论最优。
+   *
+   * 注意：这是覆盖保证，不改变中奖概率。买满 C(v,k) 注才是全包，
+   * 缩水只是用更少的注换取「条件成立时至少中 t 个」。
+   */
+  function buildWheel(nums, k, t) {
+    var v = nums.length;
+    if (v < k || t > k) return { picks: [], need: 0, totalT: 0 };
+    var subT = combinations(v, t);
+    var subK = combinations(v, k);
+    if (subT.length > 4000 || subK.length > 20000) {
+      return { picks: [], error: "号码数过多，计算量过大" };
+    }
+
+    var tIndex = {};
+    for (var i = 0; i < subT.length; i++) tIndex[subT[i].join(",")] = i;
+    var cover = [];
+    for (var j = 0; j < subK.length; j++) {
+      var subs = subCombos(subK[j], t);
+      var idxs = [];
+      for (var q = 0; q < subs.length; q++) idxs.push(tIndex[subs[q].join(",")]);
+      cover.push(idxs);
+    }
+
+    var covered = new Uint8Array(subT.length);
+    var remaining = subT.length;
+    var picked = [], used = new Uint8Array(subK.length);
+
+    while (remaining > 0) {
+      var best = -1, bestGain = 0;
+      for (var a = 0; a < subK.length; a++) {
+        if (used[a]) continue;
+        var gain = 0, arr = cover[a];
+        for (var b = 0; b < arr.length; b++) if (!covered[arr[b]]) gain++;
+        if (gain > bestGain) { bestGain = gain; best = a; }
+      }
+      if (best < 0) break;
+      used[best] = 1;
+      picked.push(subK[best].map(function (x) { return nums[x]; }));
+      var cv = cover[best];
+      for (var c = 0; c < cv.length; c++) if (!covered[cv[c]]) { covered[cv[c]] = 1; remaining--; }
+    }
+
+    return {
+      picks: picked,
+      need: remaining,
+      totalT: subT.length,
+      totalK: subK.length,
+      v: v, k: k, t: t,
+      lowerBound: Math.ceil(subT.length / subCombos(new Array(k).fill(0).map(function (_, i) { return i; }), t).length),
+    };
+  }
+
   /* ==================== 多注方案 ==================== */
 
   /*
@@ -769,6 +856,7 @@
     evaluate: evaluate,
     recommend: recommend,
     recommendMulti: recommendMulti,
+    buildWheel: buildWheel,
     pickSets: pickSets,
     backtest: backtest,
     makeFrame: makeFrame,

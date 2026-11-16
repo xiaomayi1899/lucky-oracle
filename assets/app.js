@@ -22,6 +22,7 @@
     showAllVotes: false,
     modelData: null,
     multi: null,
+    wheel: null,
     track: null,
     fetching: false,
     updated: "",
@@ -341,9 +342,11 @@
               p.special.map(function (n) { return '<span class="ball small special">' + two(n) + "</span>"; }).join("") : "") +
             "</span></div>";
         }).join("") +
-        '<div class="multi-note">' + mt.picks.length + " 注的中奖概率约是单注的 " +
-          mt.picks.length + " 倍，成本也是 " + mt.picks.length +
-          " 倍，期望回报率不变。注与注之间尽量不重叠，覆盖更多号码。</div>" +
+        '<div class="multi-note">每注中奖概率完全相同（都是 1/' +
+          (state.game === "ssq" ? "1772 万" : "2143 万") +
+          "）。多买 " + mt.picks.length + " 注的意义只是注数变多，至少中一注的概率约为单注的 " +
+          mt.picks.length + " 倍；成本同样 " + mt.picks.length +
+          " 倍，期望回报率不变。<b>号码怎么分散都不影响概率</b>，唯一要求是这几注不能重复。</div>" +
         "</div>";
     }
 
@@ -474,6 +477,95 @@
         '<span><i style="background:var(--bg2);border:1px solid var(--line)"></i>未开</span>' +
         "<span>上半部分较新（最近 5 期）</span>" +
       "</div>";
+  }
+
+  /* ---------- 缩水矩阵 ---------- */
+  function renderWheel() {
+    var body = $("wheelBody");
+    var meta = $("wheelMeta");
+    if (!body) return;
+    var g = C.GAMES[state.game];
+    var w = state.wheel;
+
+    if (!w || w.game !== state.game) {
+      meta.textContent = "未生成";
+      body.innerHTML = '<div class="muted">把票数最高的 <b>17</b> 个号做覆盖设计：' +
+        "只要开奖号里有 <b>t</b> 个落在其中，就保证至少一注命中 t 个。" +
+        "注数随 t 快速上升，成本也会很高。</div>" +
+        '<div class="pick-actions">' +
+        '<button class="btn" id="wheel3">保证中 3 个</button>' +
+        '<button class="btn" id="wheel4">保证中 4 个</button></div>';
+      $("wheel3").addEventListener("click", function () { runWheel(3); });
+      $("wheel4").addEventListener("click", function () { runWheel(4); });
+      return;
+    }
+
+    var r = w.result;
+    var cost = r.picks.length * 2;
+    var minPrize = g.id === "ssq"
+      ? (w.t === 4 ? "4+0 五等奖 10 元" : "3+0 无奖（需配蓝球）")
+      : (w.t === 4 ? "4+0 七等奖 100 元" : "3+0 无奖");
+
+    meta.textContent = r.picks.length + " 注 · " + cost + " 元";
+
+    var html = '<div class="bt-grid">' +
+      '<div class="bt-cell"><div class="v">' + r.picks.length + '</div><div class="k">需要注数</div></div>' +
+      '<div class="bt-cell"><div class="v">' + cost + '</div><div class="k">成本（元）</div></div>' +
+      '<div class="bt-cell"><div class="v">' + r.totalT + '</div><div class="k">需覆盖组合</div></div>' +
+      "</div>";
+
+    html += '<div class="muted">号码池 ' + r.v + " 个，保证开奖号中任意 <b>" + r.t +
+      "</b> 个落在池内时至少一注命中。<b>前提</b>：开奖号里有 " + r.t + " 个在你的 " + r.v +
+      " 个号里，双色球约 26%、大乐透约 31%（超几何分布）。没落进来就保证不了。</div>";
+
+    html += '<div class="warn" style="margin-top:10px">成本 ' + cost + " 元，保证命中时最低奖金 " +
+      minPrize + "。缩水不改变中奖概率，只是用更少的注换取条件性覆盖——" +
+      (cost > 100 ? "这个成本通常远高于对应奖金。" : "") + "</div>";
+
+    html += '<div class="bt-rows" style="margin-top:10px">';
+    r.picks.slice(0, 8).forEach(function (p, i) {
+      html += '<div class="bt-row"><span class="iss">' + (i + 1) + "</span>" +
+        '<span class="nums">' + p.map(function (n) {
+          return '<span class="mini">' + two(n) + "</span>";
+        }).join("") + "</span></div>";
+    });
+    html += "</div>";
+    if (r.picks.length > 8) {
+      html += '<div class="muted" style="margin-top:6px">仅显示前 8 注，共 ' + r.picks.length + " 注</div>";
+    }
+
+    html += '<div class="pick-actions">' +
+      '<button class="btn primary" id="wheelCopy">复制全部 ' + r.picks.length + " 注</button>" +
+      '<button class="btn" id="wheelAgain">重新生成</button></div>';
+
+    body.innerHTML = html;
+    $("wheelCopy").addEventListener("click", function () {
+      var text = r.picks.map(function (p) { return p.map(two).join(" "); }).join("\n");
+      fallbackCopy(text);
+    });
+    $("wheelAgain").addEventListener("click", function () {
+      state.wheel = null;
+      renderWheel();
+    });
+  }
+
+  function runWheel(t) {
+    if (!state.rec || !state.rec.main) return;
+    var g = C.GAMES[state.game];
+    var pool = state.rec.main.sorted.slice(0, 17).map(function (x) { return x.n; })
+      .sort(function (a, b) { return a - b; });
+    var body = $("wheelBody");
+    body.innerHTML = '<div class="muted">正在计算覆盖设计…</div>';
+
+    setTimeout(function () {
+      try {
+        var r = S.buildWheel(pool, g.mainCount, t);
+        state.wheel = { game: state.game, t: t, result: r };
+      } catch (e) {
+        state.wheel = null;
+      }
+      renderWheel();
+    }, 30);
   }
 
   /* ---------- 训练引擎 ---------- */
@@ -647,6 +739,7 @@
     renderPick();
     renderVotes();
     renderTrend();
+    renderWheel();
     renderModel();
     renderTrack();
     var g = C.GAMES[state.game];
