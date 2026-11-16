@@ -22,6 +22,8 @@
     backtest: null,
     backtestBusy: false,
     showAllVotes: false,
+    backfit: null,
+    backfitBusy: false,
     weights: null,
     track: null,
     optimizing: false,
@@ -309,7 +311,7 @@
       var sh = rec.main.shape;
       html += '<div class="shapeline">形态：和值 <b>' + sh.sum + '</b>（历史中位 ' + sh.mid +
         "）· 奇偶 <b>" + sh.odd + ":" + sh.even + "</b> · 连号 <b>" + sh.consec + "</b> 对 · 形态合理度 <b>" +
-        Math.round((sh.shape || 0) * 100) + '%</b><small>票数按 80% + 形态 20% 加权排序，避免推出历史上几乎不出现的极端组合</small></div>';
+        Math.round((sh.shape || 0) * 100) + '%</b><small>票数按 70% + 形态 30% 加权排序，避免推出历史上几乎不出现的极端组合</small></div>';
     }
 
     var ci = crowdInfo(state.game, rec.main.primary);
@@ -629,6 +631,135 @@
     body.innerHTML = html;
   }
 
+  /* ---------- 反推实验室 ---------- */
+  var BF_TRAIN = 60;
+  var BF_TEST = 200;
+
+  function renderBackfit() {
+    var body = $("backfitBody");
+    var meta = $("backfitMeta");
+    if (!body) return;
+    var g = C.GAMES[state.game];
+    var r = state.backfit;
+
+    if (state.backfitBusy) return;
+
+    if (!r || r.game !== state.game) {
+      meta.textContent = "未运行";
+      body.innerHTML = '<div class="muted">用最近 ' + BF_TRAIN +
+        " 期反推出「最优权重」，再用接下来 " + BF_TEST +
+        ' 期检验。这是对「根据历史反推规律」最直接的验证。</div>' +
+        '<div class="pick-actions"><button class="btn primary" id="bfRun">开始反推</button></div>';
+      $("bfRun").addEventListener("click", runBackfit);
+      return;
+    }
+
+    var trainUp = r.baseTrain ? (r.tunedTrain / r.baseTrain - 1) * 100 : 0;
+    var testUp = r.baseTest ? (r.tunedTest / r.baseTest - 1) * 100 : 0;
+
+    meta.textContent = r.trainN + " 期反推 · " + r.testN + " 期检验";
+
+    body.innerHTML =
+      '<div class="bt-grid">' +
+        '<div class="bt-cell"><div class="v">' + r.baseTrain.toFixed(2) + '</div><div class="k">被反推的 ' + r.trainN + ' 期（原始）</div></div>' +
+        '<div class="bt-cell"><div class="v">' + r.tunedTrain.toFixed(2) + '</div><div class="k">反推后</div></div>' +
+        '<div class="bt-cell"><div class="v ' + (trainUp > 0 ? "ok" : "bad") + '">' +
+          (trainUp > 0 ? "+" : "") + trainUp.toFixed(0) + '%</div><div class="k">训练集提升</div></div>' +
+      "</div>" +
+      '<div class="bt-grid">' +
+        '<div class="bt-cell"><div class="v">' + r.baseTest.toFixed(2) + '</div><div class="k">接下来 ' + r.testN + ' 期（原始）</div></div>' +
+        '<div class="bt-cell"><div class="v">' + r.tunedTest.toFixed(2) + '</div><div class="k">用反推权重</div></div>' +
+        '<div class="bt-cell"><div class="v ' + (testUp > 0 ? "ok" : "bad") + '">' +
+          (testUp > 0 ? "+" : "") + testUp.toFixed(0) + '%</div><div class="k">未来期变化</div></div>' +
+      "</div>" +
+      '<p class="warn" style="margin-top:10px">' +
+        "反推在被反推的那 " + r.trainN + " 期上提升了 " + trainUp.toFixed(0) +
+        "%，但接下来的 " + r.testN + " 期变化 " + testUp.toFixed(0) + "%。" +
+        "这就是过拟合：权重记住了训练期开奖号码的偶然波动，而不是可延续的规律。" +
+        (trainUp > 15 && Math.abs(testUp) < 5
+          ? "提升越大、未来越无效，说明拟合的是噪声。"
+          : "") +
+      "</p>" +
+      '<div class="pick-actions"><button class="btn" id="bfAgain">重新反推</button></div>';
+
+    $("bfAgain").addEventListener("click", runBackfit);
+  }
+
+  function runBackfit() {
+    if (state.backfitBusy || !state.data) return;
+    var g = C.GAMES[state.game];
+    var gameData = state.data.games[state.game];
+    if (!gameData || !gameData.draws) return;
+    var draws = gameData.draws;
+    var win = WINDOW;
+    var k = g.mainCount, poolMin = g.mainMin, size = g.mainMax - g.mainMin + 1;
+    var trainN = Math.min(BF_TRAIN, Math.max(10, draws.length - win - 2));
+    var testN = Math.min(BF_TEST, Math.max(20, draws.length - win - trainN - 2));
+
+    state.backfitBusy = true;
+    var body = $("backfitBody");
+    var meta = $("backfitMeta");
+    meta.textContent = "运行中";
+    body.innerHTML = '<div class="muted" id="bfMsg">正在构建样本…</div><progress id="bfBar" max="100" value="0"></progress>';
+
+    function setP(ratio, text) {
+      var bar = $("bfBar"), msg = $("bfMsg");
+      if (bar) bar.value = Math.round(Math.max(0, Math.min(1, ratio)) * 100);
+      if (msg) msg.textContent = text;
+    }
+
+    var train = [], test = [], idx = 0, total = trainN + testN;
+
+    function build() {
+      var t0 = performance.now();
+      while (performance.now() - t0 < 45) {
+        if (idx >= total) { optimise(); return; }
+        var f = S.makeFrame(g, draws, win, idx);
+        if (f) { if (idx < trainN) train.push(f); else test.push(f); }
+        idx++;
+      }
+      setP(idx / total * 0.45, "正在构建样本 " + idx + " / " + total + " 期…");
+      setTimeout(build, 0);
+    }
+
+    function optimise() {
+      if (!train.length || !test.length) {
+        state.backfitBusy = false;
+        state.backfit = null;
+        renderBackfit();
+        return;
+      }
+      var opt = S.createOptimizer(train, k, poolMin, size, { rounds: 3 });
+      function tick() {
+        var t0 = performance.now();
+        while (!opt.state.finished && performance.now() - t0 < 40) opt.stepOne();
+        if (!opt.state.finished) {
+          setP(0.45 + opt.progress() * 0.45, "正在反推权重 " + Math.round(opt.progress() * 100) + "%…");
+          setTimeout(tick, 0);
+          return;
+        }
+        var res = opt.result();
+        var ones = [];
+        for (var i = 0; i < res.weights.length; i++) ones.push(1);
+        state.backfit = {
+          game: state.game,
+          trainN: train.length,
+          testN: test.length,
+          baseTrain: res.baseScore,
+          tunedTrain: res.tunedScore,
+          baseTest: S.evalFrames(test, ones, k, poolMin, size),
+          tunedTest: S.evalFrames(test, res.weights, k, poolMin, size),
+        };
+        state.backfitBusy = false;
+        renderBackfit();
+      }
+      setP(0.45, "正在反推权重…");
+      tick();
+    }
+
+    build();
+  }
+
   /* ---------- 实盘战绩 ---------- */
   function loadTrack() {
     fetch("data/track.json?t=" + Date.now(), { cache: "no-store" })
@@ -910,6 +1041,7 @@
     renderSchools();
     renderTrend();
     renderTrack();
+    renderBackfit();
     renderOpt();
     if (!state.backtest) renderBacktest();
     var g = C.GAMES[state.game];
