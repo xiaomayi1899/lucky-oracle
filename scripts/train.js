@@ -180,12 +180,26 @@ function trainGame(gid, data, prev) {
     .sort(function (a, b) { return b.c - a.c || a.n - b.n; });
   var specialPick = specSorted.slice(0, g.specialCount).map(function (x) { return x.n; });
 
-  /* 特殊号训练集命中率 */
-  var specHit = 0;
+  /* 特殊号命中率：至少中 1 个 / 全中，并给出精确随机基准 */
+  function combNum(n, kk) {
+    var r = 1;
+    for (var i = 0; i < kk; i++) r = r * (n - i) / (i + 1);
+    return Math.round(r);
+  }
+  var specAny = 0, specFull = 0;
   windowDraws.forEach(function (d) {
-    if (S.hitCount(specialPick, d[g.keySpecial] || []) > 0) specHit++;
+    var h = S.hitCount(specialPick, d[g.keySpecial] || []);
+    if (h > 0) specAny++;
+    if (h === g.specialCount) specFull++;
   });
-  var specRate = windowDraws.length ? specHit / windowDraws.length : 0;
+  var specRate = windowDraws.length ? specAny / windowDraws.length : 0;
+  var specFullRate = windowDraws.length ? specFull / windowDraws.length : 0;
+
+  var poolSize = g.specialMax, selN = g.specialCount;
+  var combTotal = combNum(poolSize, selN);
+  var combZero = combNum(poolSize - selN, selN);
+  var randAny = 1 - combZero / combTotal;   /* 至少中 1 个 */
+  var randFull = 1 / combTotal;             /* 全中 */
 
   var changed = Object.keys(weights).length;
   var base = res.baseScore;
@@ -210,8 +224,9 @@ function trainGame(gid, data, prev) {
   console.log("  · " + gid + " 主区 " + frames.length + " 期：命中 " + base.toFixed(3) +
     " -> " + tuned.toFixed(3) + "（" + ((tuned / base - 1) * 100).toFixed(0) +
     "%），调整 " + changed + " 个公式");
-  console.log("    " + gid + " 特殊号 " + specialPick.join(",") + "：命中 " +
-    (specRate * 100).toFixed(1) + "%（随机 " + (g.specialCount / g.specialMax * 100).toFixed(1) + "%）");
+  console.log("    " + gid + " " + g.specialLabel + " " + specialPick.join(",") +
+    "：至少中1个 " + (specRate * 100).toFixed(1) + "%（随机 " + (randAny * 100).toFixed(1) +
+    "%）| 全中 " + (specFullRate * 100).toFixed(1) + "%（随机 " + (randFull * 100).toFixed(1) + "%）");
 
   return {
     weights: weights,
@@ -224,7 +239,9 @@ function trainGame(gid, data, prev) {
     window: cfg.window,
     specialPick: specialPick,
     specialHit: Math.round(specRate * 1000) / 1000,
-    specialBase: Math.round((g.specialCount / g.specialMax) * 1000) / 1000,
+    specialFull: Math.round(specFullRate * 1000) / 1000,
+    specialBase: Math.round(randAny * 1000) / 1000,
+    specialFullBase: Math.round(randFull * 1000) / 1000,
     history: history,
   };
 }

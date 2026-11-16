@@ -1,6 +1,6 @@
 {
  "version": 2,
- "updated": "2026-11-16T08:42:25.745Z",
+ "updated": "2026-11-16T08:47:16.537Z",
  "perGame": true,
  "games": {
   "ssq": {
@@ -51,14 +51,16 @@
    "baseHit": 1.06,
    "trainHit": 1.36,
    "changed": 41,
-   "trainedAt": "2026-11-16T08:42:30.720Z",
+   "trainedAt": "2026-11-16T08:47:21.010Z",
    "basedOnIssue": "2026131",
    "window": 100,
    "specialPick": [
     2
    ],
    "specialHit": 0.11,
+   "specialFull": 0.11,
    "specialBase": 0.063,
+   "specialFullBase": 0.063,
    "history": [
     {
      "issue": "2026131",
@@ -158,7 +160,7 @@
    "baseHit": 0.61,
    "trainHit": 0.94,
    "changed": 36,
-   "trainedAt": "2026-11-16T08:42:37.158Z",
+   "trainedAt": "2026-11-16T08:47:26.560Z",
    "basedOnIssue": "26130",
    "window": 100,
    "specialPick": [
@@ -166,7 +168,9 @@
     9
    ],
    "specialHit": 0.38,
-   "specialBase": 0.167,
+   "specialFull": 0.03,
+   "specialBase": 0.318,
+   "specialFullBase": 0.015,
    "history": [
     {
      "issue": "26130",

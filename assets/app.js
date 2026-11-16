@@ -716,17 +716,24 @@
       return;
     }
 
-    var up = mm.baseHit ? (mm.trainHit / mm.baseHit - 1) * 100 : 0;
+    var randAvg = g.mainCount * g.mainCount / g.mainMax;
+    var up = randAvg ? (mm.trainHit / randAvg - 1) * 100 : 0;
     var track = state.track && state.track.games && state.track.games[state.game];
     var fwd = track ? (track.records || []).filter(function (r) { return !r.backfilled; }) : [];
     var liveAvg = fwd.length ? fwd.reduce(function (a, r) { return a + r.mainHit; }, 0) / fwd.length : null;
     var rand = g.mainCount * g.mainCount / g.mainMax;
 
+    var hitRate = mm.trainHit / g.mainCount * 100;
+    var randRate = (g.mainCount / g.mainMax) * 100;
     var html = '<div class="bt-grid">' +
-      '<div class="bt-cell"><div class="v">' + mm.trainN + '</div><div class="k">训练期数</div></div>' +
-      '<div class="bt-cell"><div class="v">' + mm.trainHit.toFixed(2) + '</div><div class="k">训练集命中</div></div>' +
-      '<div class="bt-cell"><div class="v ok">+' + up.toFixed(0) + '%</div><div class="k">相对等权提升</div></div>' +
-      "</div>";
+      '<div class="bt-cell"><div class="v">' + mm.trainHit.toFixed(2) + '<small>/' + g.mainCount + '</small></div><div class="k">平均命中个数</div></div>' +
+      '<div class="bt-cell"><div class="v">' + hitRate.toFixed(1) + '%</div><div class="k">命中率（随机 ' + randRate.toFixed(1) + '%）</div></div>' +
+      '<div class="bt-cell"><div class="v ok">+' + up.toFixed(0) + '%</div><div class="k">相对随机提升</div></div>' +
+      "</div>" +
+      '<div class="muted" style="margin-bottom:10px">' + mm.trainN + " 期训练：平均每注中 <b>" +
+      mm.trainHit.toFixed(2) + "</b> 个号（共 " + g.mainCount + " 个），即命中率 " +
+      hitRate.toFixed(1) + "%；随机选号是 " + (g.mainCount * g.mainCount / g.mainMax).toFixed(2) +
+      " 个（" + randRate.toFixed(1) + "%）。</div>";
 
     if (liveAvg !== null) {
       var diff = liveAvg - rand;
@@ -750,11 +757,18 @@
     }
 
     if (mm.specialPick && mm.specialPick.length) {
+      var sAny = (mm.specialHit || 0) * 100;
+      var sAnyBase = (mm.specialBase || 0) * 100;
+      var sFull = (mm.specialFull || 0) * 100;
+      var sFullBase = (mm.specialFullBase || 0) * 100;
       html += '<div class="bt-grid">' +
         '<div class="bt-cell"><div class="v">' + mm.specialPick.map(two).join(" ") + '</div><div class="k">训练出的' + esc(g.specialLabel) + '</div></div>' +
-        '<div class="bt-cell"><div class="v ok">' + ((mm.specialHit || 0) * 100).toFixed(1) + '%</div><div class="k">训练集命中率</div></div>' +
-        '<div class="bt-cell"><div class="v">' + ((mm.specialBase || 0) * 100).toFixed(1) + '%</div><div class="k">随机期望</div></div>' +
-        "</div>";
+        '<div class="bt-cell"><div class="v ' + (sAny > sAnyBase ? "ok" : "") + '">' + sAny.toFixed(1) + '%</div><div class="k">至少中 1 个（随机 ' + sAnyBase.toFixed(1) + '%）</div></div>' +
+        '<div class="bt-cell"><div class="v ' + (sFull > sFullBase ? "ok" : "") + '">' + sFull.toFixed(1) + '%</div><div class="k">全中（随机 ' + sFullBase.toFixed(1) + '%）</div></div>' +
+        "</div>" +
+        '<div class="muted" style="margin-bottom:10px">' + esc(g.specialLabel) + "从最近 100 期出现频次最高的号里取，" +
+        "至少中 1 个的概率 " + sAny.toFixed(1) + "%（随机 " + sAnyBase.toFixed(1) + "%），" +
+        "全中 " + sFull.toFixed(1) + "%（随机 " + sFullBase.toFixed(1) + "%）。</div>";
     }
 
     html += '<div class="muted">基于 ' + esc(mm.basedOnIssue) + " 期开奖后重训，调整了 " + mm.changed + " 个公式的权重。" +
