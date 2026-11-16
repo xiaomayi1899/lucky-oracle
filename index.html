@@ -20,7 +20,7 @@
     <span class="logo">∑</span>
     <div class="brand-text">
       <strong>数理投票</strong>
-      <small>六大学科 · 逐号投票</small>
+      <small>100 期反推 · 自动重训</small>
     </div>
   </div>
   <div class="game-tabs" id="gameTabs" role="tablist" aria-label="选择彩种"></div>
@@ -42,6 +42,15 @@
     <div id="pickBody"></div>
   </section>
 
+  <!-- 训练引擎 -->
+  <section class="card model" id="model">
+    <div class="card-head">
+      <h2>训练引擎</h2>
+      <span class="badge" id="modelMeta">—</span>
+    </div>
+    <div id="modelBody" class="muted">每期开奖后，用最近 100 期重新反推公式权重。</div>
+  </section>
+
   <!-- 投票分布 -->
   <section class="card votes" id="votes">
     <div class="card-head">
@@ -49,15 +58,6 @@
       <div class="seg" id="voteSeg"></div>
     </div>
     <div id="voteBody"></div>
-  </section>
-
-  <!-- 六大学科 -->
-  <section class="card schools" id="schools">
-    <div class="card-head">
-      <h2>六大学科 · 公式明细</h2>
-      <span class="badge" id="schoolMeta">—</span>
-    </div>
-    <div id="schoolBody"></div>
   </section>
 
   <!-- 走势矩阵 -->
@@ -78,47 +78,20 @@
     <div id="trackBody" class="muted">每期开奖前把推荐写进仓库，开奖后对比。哈希链保证事后改不了。</div>
   </section>
 
-  <!-- 反推实验室 -->
-  <section class="card backfit" id="backfit">
-    <div class="card-head">
-      <h2>反推实验室</h2>
-      <span class="badge" id="backfitMeta">未运行</span>
-    </div>
-    <div id="backfitBody" class="muted">用最近 60 期反推出「最优权重」，再用接下来 200 期检验。这是对「根据历史反推规律」最直接的验证。</div>
-  </section>
-
-  <!-- 权重优化 -->
-  <section class="card optimize" id="optimize">
-    <div class="card-head">
-      <h2>公式权重优化</h2>
-      <span class="badge" id="optMeta">等权 1.0×</span>
-    </div>
-    <div id="optBody" class="muted">用最近 100 期，搜索让「加权票数前 6 名」命中最多的公式权重。</div>
-  </section>
-
-  <!-- 回测 -->
-  <section class="card backtest" id="backtest">
-    <div class="card-head">
-      <h2>历史回测</h2>
-      <button class="btn" id="backtestBtn">跑最近 100 期</button>
-    </div>
-    <div id="backtestBody" class="muted">用当前权重，回放历史每一期，看看命中几个。回测不改变未来概率。</div>
-  </section>
-
   <!-- 说明 -->
   <section class="card notes">
     <h2>它是怎么算的</h2>
     <ol class="steps">
-      <li><b>两套公式，互不共用。</b>双色球用一套（红球 1–33、蓝球 1–16），大乐透用另一套（前区 1–35、后区 1–12）。代码里用彩种前缀强制隔离，交叉注册会直接报错。</li>
-      <li><b>每个公式独立打分。</b>每个公式对号码池里每个号码算一个分，把分数归一化后，给最看好的几个号码投票。每票默认权重 1，可在「公式权重优化」里按历史回测调整。</li>
-      <li><b>重复的公式只算一个观点。</b>不少公式其实每期都选同样的号（例如 8 个频率类公式完全重合），投票时按选号重合度聚类，每组总权重为 1，避免某一类思路淹没其他学科。所以 86 个公式实际只有 43 个独立观点。</li>
-      <li><b>票数最高者入选。</b>汇总所有票数，红球/前区取票数最高的 6 个或 5 个，蓝球/后区取最高的 1 个或 2 个，就是「最终一注」。同票时按归一化总分排序。</li>
-      <li><b>备选一注。</b>在候选池里找与主推荐至少差 2 个号码、且总票数最高的组合。</li>
-      <li><b>权重可以调，但要看得懂。</b>「公式权重优化」用最近 100 期搜索每个公式的最佳权重，并强制前半 / 后半两折同时不下降；再用更早的 50 期做独立验证。若训练集提升而验证集下降，页面会直接标成过拟合。</li>
-      <li><b>反推出来的规律活不过训练期。</b>「反推实验室」用最近 60 期反推最优权重，再用接下来 200 期检验。实测：训练集常见 +18%～+47%，未来期回到 ±2%。同样地，把历史里「上期出 A 则下期出 B」的 400 多条规则挖出来，训练集命中率 25.7%（基准 18.2%），换到后一半历史就回落到 18.6%。</li>
+      <li><b>只用最近 100 期。</b>每次开奖后，脚本用这 100 期反推每个公式的最优权重——让「加权票数前几名」在这 100 期里命中最高的那组权重。</li>
+      <li><b>自动修正。</b>GitHub Actions 每 10 分钟检查一次开奖；只要出现新一期，就用新的最近 100 期重新训练，页面下次打开就是新权重。</li>
+      <li><b>公式不混用。</b>双色球用红球 1–33 / 蓝球 1–16 的一套，大乐透用前区 1–35 / 后区 1–12 的另一套，代码里按彩种前缀强制隔离。</li>
+      <li><b>票数最高者入选。</b>按训练出的权重计票，主号区取票数最高的 6 个或 5 个，特殊号区取最高的 1 个或 2 个。</li>
+      <li><b>训练成绩不等于未来成绩。</b>下面同时显示「训练集命中」和「实盘命中」。训练集是模型见过的数据，必然好看；实盘是它没见过的，那才是真实水平。</li>
     </ol>
     <p class="warn">
-      <b>请务必读完：</b>彩票每期开奖都是独立随机事件，任何走势、公式、学科都不能提高中奖概率。这里的「推荐」只是把不同角度的统计描述放在一起投票，结果稳定可复现，但不代表更可能中奖。理性购彩，量力而行，未满 18 周岁禁止购买彩票。
+      <b>请务必读完：</b>彩票每期开奖都是独立随机事件。用历史反推权重，本质是拟合那 100 期的偶然波动——
+      训练集能提升 20%～35%，但换到没见过的期数就会回落。页面里的「实盘战绩」是唯一没被训练污染的数字，请看那个。
+      理性购彩，量力而行，未满 18 周岁禁止购买彩票。
     </p>
     <p class="muted" id="footMeta"></p>
   </section>

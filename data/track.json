@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-16T07:50:02.949Z",
+ "updated": "2026-11-16T07:52:59.049Z",
  "games": {
   "ssq": {
    "records": [
@@ -1327,21 +1327,21 @@
    ],
    "pending": {
     "pick": [
-     1,
      4,
+     10,
      13,
+     14,
      24,
-     30,
-     32
+     30
     ],
     "special": [
      2
     ],
     "alt": [
-     4,
+     1,
      13,
      14,
-     18,
+     20,
      24,
      30
     ],
@@ -1351,12 +1351,13 @@
     "votes": {},
     "models": 72,
     "clusters": 43,
+    "trainedOn": "2026131",
     "forIssue": "2026132",
     "basedOnIssue": "2026131",
-    "generatedAt": "2026-11-16T07:50:02.920Z"
+    "generatedAt": "2026-11-16T07:52:58.998Z"
    },
    "lastHash": "fd26e69e91e87363",
-   "updated": "2026-11-16T07:50:02.920Z"
+   "updated": "2026-11-16T07:52:58.999Z"
   },
   "dlt": {
    "records": [
@@ -2695,10 +2696,10 @@
     ],
     "alt": [
      10,
-     12,
      14,
      17,
-     25
+     25,
+     26
     ],
     "altSpecial": [
      9,
@@ -2707,12 +2708,13 @@
     "votes": {},
     "models": 73,
     "clusters": 46,
+    "trainedOn": "26130",
     "forIssue": "26131",
     "basedOnIssue": "26130",
-    "generatedAt": "2026-11-16T07:50:02.949Z"
+    "generatedAt": "2026-11-16T07:52:59.048Z"
    },
    "lastHash": "5e70be57b9c9f662",
-   "updated": "2026-11-16T07:50:02.949Z"
+   "updated": "2026-11-16T07:52:59.049Z"
   }
  }
 }

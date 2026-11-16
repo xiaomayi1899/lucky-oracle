@@ -19,6 +19,7 @@ var crypto = require("crypto");
 var ROOT = path.resolve(__dirname, "..");
 var DATA_FILE = path.join(ROOT, "data", "lottery.json");
 var TRACK_FILE = path.join(ROOT, "data", "track.json");
+var MODEL_FILE = path.join(ROOT, "data", "model.json");
 var WINDOW = 100;
 var BACKFILL = 30;
 
@@ -69,10 +70,12 @@ function guessNextIssue(issue) {
   }
 }
 
-function recommendFor(gid, draws) {
+function recommendFor(gid, draws, model) {
   var g = C.GAMES[gid];
   var ctx = C.buildContext(g, draws, WINDOW);
-  var rec = S.recommend(ctx);
+  /* 使用训练引擎产出的权重，保证与页面推荐一致 */
+  var w = model && model.games && model.games[gid] ? model.games[gid].weights : null;
+  var rec = S.recommend(ctx, { weights: w });
   return {
     pick: rec.main.primary,
     special: rec.special ? rec.special.primary : [],
@@ -81,6 +84,7 @@ function recommendFor(gid, draws) {
     votes: {},
     models: rec.main.modelCount,
     clusters: rec.main.clusterCount,
+    trainedOn: w ? (model.games[gid].basedOnIssue || "") : "",
   };
 }
 
@@ -107,7 +111,7 @@ function buildRecord(pending, draw, g, backfilled) {
   };
 }
 
-function trackGame(gid, data, prevBucket) {
+function trackGame(gid, data, prevBucket, model) {
   var g = C.GAMES[gid];
   var gameData = data.games && data.games[gid];
   if (!gameData || !gameData.draws || gameData.draws.length < WINDOW + 5) {
@@ -145,7 +149,7 @@ function trackGame(gid, data, prevBucket) {
       if (existing[d.issue]) continue;
       var history = draws.slice(i + 1);
       if (history.length < WINDOW + 2) break;
-      var pending = recommendFor(gid, history);
+      var pending = recommendFor(gid, history, model);
       pending.generatedAt = "";
       var r2 = buildRecord(pending, d, g, true);
       r2.prevHash = bucket.lastHash || "";
@@ -167,7 +171,7 @@ function trackGame(gid, data, prevBucket) {
 
   /* 3) 写入下一期的 pending（开奖前的推荐） */
   var nextIssue = guessNextIssue(latest.issue);
-  var fresh = recommendFor(gid, draws);
+  var fresh = recommendFor(gid, draws, model);
   fresh.forIssue = nextIssue;
   fresh.basedOnIssue = String(latest.issue);
   fresh.generatedAt = new Date().toISOString();
@@ -212,12 +216,13 @@ function main() {
     log("!! 读不到 data/lottery.json");
     return 1;
   }
+  var model = readJson(MODEL_FILE, null);
   var state = readJson(TRACK_FILE, { version: 1, updated: "", games: {} });
   if (!state.games) state.games = {};
 
   log("→ 更新实盘跟踪（数据更新于 " + (data.updated || "?") + "）");
   C.GAME_ORDER.forEach(function (gid) {
-    state.games[gid] = trackGame(gid, data, state.games[gid] || {});
+    state.games[gid] = trackGame(gid, data, state.games[gid] || {}, model);
   });
 
   state.version = 1;

@@ -40,6 +40,9 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Retrain weights on latest 100 draws
+        run: node scripts/train.js
+
       - name: Record forward-test recommendations
         run: node scripts/track.js
 
@@ -47,11 +50,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet -- data/lottery.json data/track.json; then
+          if git diff --quiet -- data/lottery.json data/track.json data/model.json; then
             echo "开奖数据无变化"
           else
-            git add data/lottery.json data/track.json
-            git commit -m "chore(data): refresh draws and forward-test record [skip ci]"
+            git add data/lottery.json data/track.json data/model.json
+            git commit -m "chore(data): refresh draws, retrain weights, forward-test [skip ci]"
             git push
           fi
 

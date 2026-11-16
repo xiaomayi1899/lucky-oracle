@@ -24,6 +24,7 @@
     showAllVotes: false,
     backfit: null,
     backfitBusy: false,
+    modelData: null,
     weights: null,
     track: null,
     optimizing: false,
@@ -96,7 +97,9 @@
     }
     try {
       state.ctx = C.buildContext(g, gameData.draws, WINDOW);
-      state.rec = S.recommend(state.ctx, { weights: state.weights });
+      var mw = state.modelData && state.modelData.games && state.modelData.games[state.game]
+        ? state.modelData.games[state.game].weights : null;
+      state.rec = S.recommend(state.ctx, { weights: mw });
       state.backtest = null;
     } catch (e) {
       state.ctx = null; state.rec = null;
@@ -760,6 +763,71 @@
     build();
   }
 
+  /* ---------- 训练引擎 ---------- */
+  function loadModel() {
+    fetch("data/model.json?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) {
+        if (j) { state.modelData = j; compute(); renderAll(); }
+      })
+      .catch(function () { /* ignore */ });
+  }
+
+  function renderModel() {
+    var body = $("modelBody");
+    var meta = $("modelMeta");
+    if (!body) return;
+    var g = C.GAMES[state.game];
+    var all = state.modelData;
+    var mm = all && all.games && all.games[state.game];
+    if (!mm) {
+      if (meta) meta.textContent = "—";
+      body.innerHTML = '<div class="muted">训练数据加载中…</div>';
+      return;
+    }
+
+    var up = mm.baseHit ? (mm.trainHit / mm.baseHit - 1) * 100 : 0;
+    var track = state.track && state.track.games && state.track.games[state.game];
+    var fwd = track ? (track.records || []).filter(function (r) { return !r.backfilled; }) : [];
+    var liveAvg = fwd.length ? fwd.reduce(function (a, r) { return a + r.mainHit; }, 0) / fwd.length : null;
+    var rand = g.mainCount * g.mainCount / g.mainMax;
+
+    var html = '<div class="bt-grid">' +
+      '<div class="bt-cell"><div class="v">' + mm.trainN + '</div><div class="k">训练期数</div></div>' +
+      '<div class="bt-cell"><div class="v">' + mm.trainHit.toFixed(2) + '</div><div class="k">训练集命中</div></div>' +
+      '<div class="bt-cell"><div class="v ok">+' + up.toFixed(0) + '%</div><div class="k">相对等权提升</div></div>' +
+      "</div>";
+
+    if (liveAvg !== null) {
+      var diff = liveAvg - rand;
+      html += '<div class="bt-grid">' +
+        '<div class="bt-cell"><div class="v">' + liveAvg.toFixed(2) + '</div><div class="k">实盘命中（' + fwd.length + ' 期）</div></div>' +
+        '<div class="bt-cell"><div class="v">' + rand.toFixed(2) + '</div><div class="k">随机期望</div></div>' +
+        '<div class="bt-cell"><div class="v ' + (diff >= 0 ? "ok" : "bad") + '">' +
+          (diff >= 0 ? "+" : "") + diff.toFixed(2) + '</div><div class="k">与随机之差</div></div>' +
+        "</div>";
+    }
+
+    html += '<div class="muted">基于 ' + esc(mm.basedOnIssue) + " 期开奖后重训，调整了 " + mm.changed + " 个公式的权重。" +
+      (liveAvg === null
+        ? "实盘记录还没积累，从下一期开奖开始统计。"
+        : "训练集是模型见过的数据，实盘是它没见过的——以实盘为准。") +
+      "</div>";
+
+    if (mm.history && mm.history.length) {
+      html += '<div class="bt-rows" style="margin-top:10px">';
+      mm.history.slice(-5).reverse().forEach(function (h) {
+        html += '<div class="bt-row"><span class="iss">' + esc(String(h.issue).slice(-6)) + "</span>" +
+          '<span class="nums dim">训练 ' + h.trainN + " 期 · 调整 " + h.changed + " 个</span>" +
+          '<span class="hit">' + h.trainHit.toFixed(2) + "</span></div>";
+      });
+      html += "</div>";
+    }
+
+    body.innerHTML = html;
+    if (meta) meta.textContent = "最近 " + mm.trainN + " 期 · " + esc(mm.basedOnIssue) + " 期后重训";
+  }
+
   /* ---------- 实盘战绩 ---------- */
   function loadTrack() {
     fetch("data/track.json?t=" + Date.now(), { cache: "no-store" })
@@ -1038,17 +1106,14 @@
     renderHero();
     renderPick();
     renderVotes();
-    renderSchools();
     renderTrend();
+    renderModel();
     renderTrack();
-    renderBackfit();
-    renderOpt();
-    if (!state.backtest) renderBacktest();
     var g = C.GAMES[state.game];
     var info = $("footMeta");
     if (info) {
       info.textContent = "双色球 " + S.modelCount("ssq") + " 个公式 · 大乐透 " + S.modelCount("dlt") +
-        " 个公式，两者独立注册、互不共用。统计窗口：最近 " + WINDOW + " 期。当前彩种：" + g.name + "。";
+        " 个公式，按彩种隔离。每期开奖后用最近 " + WINDOW + " 期重训权重。当前彩种：" + g.name + "。";
     }
   }
 
@@ -1071,6 +1136,7 @@
     }
 
     loadData();
+    loadModel();
     loadTrack();
     setInterval(loadData, REFRESH_MS);
     setInterval(loadTrack, REFRESH_MS);
