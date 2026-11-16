@@ -312,7 +312,10 @@
 
     var maxV = rec.main.maxVotes || 1;
     html += '<div class="pick-note">' +
-      (rec.main.champion ? "冠军方法「" + esc(rec.main.champion.modelName) + "」直接选号" : "") +
+      (rec.main.champion
+        ? "冠军方法「" + esc(rec.main.champion.modelName) + "」选号（与上期重号 " +
+          rec.main.champion.repeat + " 个，上限 2）"
+        : "") +
       (rec.main.champion ? " · " : "") +
       esc(g.mainLabel) + "最高 " + fmtVote(maxV) + " 票 · " + rec.main.modelCount + " 个公式归并成 " +
       rec.main.clusterCount + " 个独立观点，按训练权重合计票数" +

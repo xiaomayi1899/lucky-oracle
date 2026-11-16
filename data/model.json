@@ -1,6 +1,6 @@
 {
  "version": 2,
- "updated": "2026-11-16T08:26:38.206Z",
+ "updated": "2026-11-16T08:29:57.152Z",
  "perGame": true,
  "games": {
   "ssq": {
@@ -24,7 +24,7 @@
    "baseHit": 1.06,
    "trainHit": 1.27,
    "changed": 14,
-   "trainedAt": "2026-11-16T08:26:38.848Z",
+   "trainedAt": "2026-11-16T08:29:58.009Z",
    "basedOnIssue": "2026131",
    "window": 100,
    "specialPick": [
@@ -64,13 +64,7 @@
       "id": "ssq_f_scurve",
       "name": "S 曲线拟合",
       "school": "futures",
-      "avg": 1.3
-     },
-     {
-      "id": "ssq_t_hot30",
-      "name": "近三十期热度",
-      "school": "trend",
-      "avg": 1.3
+      "avg": 1.29
      },
      {
       "id": "ssq_g_anticipate",
@@ -83,9 +77,15 @@
       "name": "拥挤度反向",
       "school": "game",
       "avg": 1.29
+     },
+     {
+      "id": "ssq_g_payoff",
+      "name": "期望收益",
+      "school": "game",
+      "avg": 1.29
      }
     ],
-    "worst": 0.91
+    "worst": 0.92
    }
   },
   "dlt": {
@@ -106,7 +106,7 @@
    "baseHit": 0.61,
    "trainHit": 0.82,
    "changed": 11,
-   "trainedAt": "2026-11-16T08:26:40.142Z",
+   "trainedAt": "2026-11-16T08:29:59.939Z",
    "basedOnIssue": "26130",
    "window": 100,
    "specialPick": [
@@ -131,44 +131,44 @@
     "candidates": 73,
     "randomBase": 0.7142857142857143,
     "champion": {
-     "id": "dlt_p_geom",
-     "name": "几何回补",
-     "school": "probability",
-     "avg": 0.88
+     "id": "dlt_f_grey",
+     "name": "灰色预测 GM(1,1)",
+     "school": "futures",
+     "avg": 0.82
     },
     "ranking": [
-     {
-      "id": "dlt_p_geom",
-      "name": "几何回补",
-      "school": "probability",
-      "avg": 0.88
-     },
-     {
-      "id": "dlt_psy_anchor",
-      "name": "锚定效应",
-      "school": "psychology",
-      "avg": 0.88
-     },
-     {
-      "id": "dlt_psy_herd",
-      "name": "从众效应",
-      "school": "psychology",
-      "avg": 0.88
-     },
-     {
-      "id": "dlt_t_repeat",
-      "name": "上期重号",
-      "school": "trend",
-      "avg": 0.88
-     },
      {
       "id": "dlt_f_grey",
       "name": "灰色预测 GM(1,1)",
       "school": "futures",
-      "avg": 0.83
+      "avg": 0.82
+     },
+     {
+      "id": "dlt_t_tail",
+      "name": "同尾走势",
+      "school": "trend",
+      "avg": 0.78
+     },
+     {
+      "id": "dlt_g_pareto",
+      "name": "帕累托组合",
+      "school": "game",
+      "avg": 0.77
+     },
+     {
+      "id": "dlt_p_multi",
+      "name": "多项分布似然",
+      "school": "probability",
+      "avg": 0.77
+     },
+     {
+      "id": "dlt_p_negbinom",
+      "name": "负二项等待",
+      "school": "probability",
+      "avg": 0.77
      }
     ],
-    "worst": 0.56
+    "worst": 0.54
    }
   }
  }

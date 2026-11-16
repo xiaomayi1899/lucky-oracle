@@ -418,23 +418,50 @@
     };
   }
 
-  /* 用指定公式（竞赛冠军）直接选号 */
-  function recommendByChampion(ctx, modelId) {
+  /*
+   * 用指定公式（竞赛冠军）选号。
+   * 硬约束：与上期的重号不超过 maxRepeat 个——否则「上期重号」类公式会
+   * 直接复制整期号码，出现「这期推荐 = 上期开奖」的荒谬结果。
+   */
+  function championPicks(sc, k, prev, maxRepeat) {
+    var cap = maxRepeat === undefined ? 2 : maxRepeat;
+    var picks = [], repeat = 0, i;
+    for (i = 0; i < sc.length && picks.length < k; i++) {
+      var v = sc[i].v;
+      if (prev && prev.indexOf(v) >= 0) {
+        if (repeat >= cap) continue;
+        repeat++;
+      }
+      picks.push(v);
+    }
+    return picks;
+  }
+
+  function scoreByModel(ctx, model) {
+    var area = ctx.main, i;
+    var sc = [];
+    for (i = 0; i < area.pool.length; i++) {
+      var v = area.pool[i], sv = 0;
+      try { sv = safeNum(model.score(ctx, area, v)); } catch (e) { sv = 0; }
+      sc.push({ v: v, s: sv });
+    }
+    sc.sort(function (a, b) { return b.s - a.s || a.v - b.v; });
+    return sc;
+  }
+
+  function recommendByChampion(ctx, modelId, maxRepeat) {
     var models = modelsOf(ctx.gameId, "main");
     var m = null, i;
     for (i = 0; i < models.length; i++) if (models[i].id === modelId) { m = models[i]; break; }
     if (!m) return null;
-    var area = ctx.main, k = ctx.game.mainCount;
-    var sc = [];
-    for (i = 0; i < area.pool.length; i++) {
-      var v = area.pool[i], sv = 0;
-      try { sv = safeNum(m.score(ctx, area, v)); } catch (e) { sv = 0; }
-      sc.push({ v: v, s: sv });
-    }
-    sc.sort(function (a, b) { return b.s - a.s || a.v - b.v; });
-    var picks = sc.slice(0, k).map(function (x) { return x.v; })
+    var k = ctx.game.mainCount;
+    var sc = scoreByModel(ctx, m);
+    var picks = championPicks(sc, k, ctx.main.last, maxRepeat)
       .sort(function (a, b) { return a - b; });
-    return { picks: picks, modelId: m.id, modelName: m.name, school: m.school };
+    return {
+      picks: picks, modelId: m.id, modelName: m.name, school: m.school,
+      repeat: picks.filter(function (v) { return ctx.main.last.indexOf(v) >= 0; }).length,
+    };
   }
 
   /* ==================== 缩水矩阵（覆盖设计） ==================== */
@@ -876,6 +903,8 @@
     recommend: recommend,
     recommendMulti: recommendMulti,
     recommendByChampion: recommendByChampion,
+    scoreByModel: scoreByModel,
+    championPicks: championPicks,
     buildWheel: buildWheel,
     pickSets: pickSets,
     backtest: backtest,

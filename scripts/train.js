@@ -76,9 +76,9 @@ function raceGame(gid, data, cfg) {
         sc.push({ v: v, s: sv });
       }
       sc.sort(function (a, b) { return b.s - a.s || a.v - b.v; });
-      var hit = 0;
-      for (var q = 0; q < k; q++) if (actual.indexOf(sc[q].v) >= 0) hit++;
-      totals[mi] += hit;
+      /* 与线上推荐一致：限制与上期重号不超过 2 个 */
+      var picks = S.championPicks(sc, k, area.last, 2);
+      totals[mi] += S.hitCount(picks, actual);
     }
     n++;
   }
