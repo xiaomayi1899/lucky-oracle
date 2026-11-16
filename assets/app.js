@@ -305,6 +305,13 @@
         fmtVote(rec.special.totalVotes) + " 票" : "") +
       "。票数相同按归一化总分排序。</div>";
 
+    if (rec.main.shape) {
+      var sh = rec.main.shape;
+      html += '<div class="shapeline">形态：和值 <b>' + sh.sum + '</b>（历史中位 ' + sh.mid +
+        "）· 奇偶 <b>" + sh.odd + ":" + sh.even + "</b> · 连号 <b>" + sh.consec + "</b> 对 · 形态合理度 <b>" +
+        Math.round((sh.shape || 0) * 100) + '%</b><small>票数按 80% + 形态 20% 加权排序，避免推出历史上几乎不出现的极端组合</small></div>';
+    }
+
     var ci = crowdInfo(state.game, rec.main.primary);
     if (ci) {
       var cls = ci.crowd < 0.95 ? "ok" : (ci.crowd > 1.05 ? "warnc" : "");
@@ -926,6 +933,10 @@
 
     var btn = $("backtestBtn");
     if (btn) btn.addEventListener("click", runBacktest);
+
+    if (!window.OracleClusters) {
+      setStatus("警告：公式聚类表未加载，投票可能退化，请刷新页面");
+    }
 
     loadData();
     loadTrack();

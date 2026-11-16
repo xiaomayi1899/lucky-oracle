@@ -348,3 +348,8 @@ body[data-game="dlt"] .wtag { background: rgba(226, 129, 42, .14); border-color:
   font-size: 10px; color: var(--dim); font-family: ui-monospace, Menlo, Consolas, monospace;
   word-break: break-all;
 }
+
+/* 形态说明 */
+.shapeline { margin-top: 10px; font-size: 12px; color: var(--muted); line-height: 1.7; }
+.shapeline b { color: var(--text); }
+.shapeline small { display: block; font-size: 10.5px; color: var(--dim); margin-top: 2px; }

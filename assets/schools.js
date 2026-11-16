@@ -221,45 +221,72 @@
   }
 
   /*
-   * 主推荐：票数最高的前 k 个号码（同票按归一化总分，再按号码本身）。
-   * 备选：候选池（前 poolSize 名）中，与主推荐至少差 minDiff 个号码，
-   *       且组合总票数最大的那一组。
+   * 形态合理度（0–1）：和值接近历史中位、连号少、奇偶平衡得分高。
+   * 不改变任何一注的中奖概率，只用于在票数接近时挑出「看起来像真实开奖」的组合。
    */
-  function pickSets(sorted, k, poolSize, minDiff) {
-    var primary = sorted.slice(0, k).map(function (x) { return x.n; })
-      .sort(function (a, b) { return a - b; });
+  function shapeScore(area, nums, sumMid) {
+    var k = nums.length, i, sum = 0, consec = 0, odd = 0;
+    for (i = 0; i < k; i++) { sum += nums[i]; if (nums[i] % 2) odd++; }
+    for (i = 1; i < k; i++) if (nums[i] - nums[i - 1] === 1) consec++;
 
-    var cand = sorted.slice(0, Math.min(sorted.length, poolSize || 14));
+    var mid = sumMid || (k * (area.min + area.max) / 2);
+    var sumScore = Math.max(0, 1 - Math.abs(sum - mid) / Math.max(1, mid * 0.35));
+    var consecScore = Math.max(0, 1 - consec * 0.45);
+    var oddScore = 1 - Math.abs(odd - k / 2) / Math.max(0.5, k / 2);
+    return 0.5 * sumScore + 0.3 * consecScore + 0.2 * Math.max(0, oddScore);
+  }
+
+  /*
+   * 主推荐：组合票数 × (0.8 + 0.2 × 形态分)，票数仍是主导。
+   * 备选：与主推荐至少差 minDiff 个号码的次优组合。
+   */
+  function pickSets(sorted, k, poolSize, minDiff, area) {
+    var cand = sorted.slice(0, Math.min(sorted.length, poolSize || 20));
     var candNums = cand.map(function (x) { return x.n; });
-    var best = null;
 
-    if (candNums.length >= k) {
-      C.eachCombination(candNums, k, function (comb) {
-        var diff = 0;
-        for (var i = 0; i < comb.length; i++) {
-          if (primary.indexOf(comb[i]) < 0) diff++;
-        }
-        if (diff < (minDiff || 1)) return;
-        var vs = totalVotesOf(sorted, comb);
-        var ss = totalScoreOf(sorted, comb);
-        if (!best || vs > best.votes || (vs === best.votes && ss > best.score)) {
-          best = { nums: comb.slice().sort(function (a, b) { return a - b; }), votes: vs, score: ss };
-        }
+    /* 预先建表，避免在每个组合里重复遍历 sorted */
+    var voteMap = {}, scoreMap = {};
+    for (var i = 0; i < sorted.length; i++) {
+      voteMap[sorted[i].n] = sorted[i].votes;
+      scoreMap[sorted[i].n] = sorted[i].score;
+    }
+    var sumMid = area && area.sumSeries.length ? C.median(area.sumSeries) : 0;
+    var all = [];
+
+    C.eachCombination(candNums, k, function (comb) {
+      var votes = 0, score = 0, j;
+      for (j = 0; j < k; j++) { votes += voteMap[comb[j]] || 0; score += scoreMap[comb[j]] || 0; }
+      var shape = area ? shapeScore(area, comb, sumMid) : 0.5;
+      all.push({
+        nums: comb.slice().sort(function (a, b) { return a - b; }),
+        votes: votes,
+        score: score,
+        shape: shape,
+        adjusted: votes * (0.7 + 0.3 * shape),
       });
+    });
+
+    all.sort(function (a, b) {
+      return b.adjusted - a.adjusted || b.votes - a.votes || b.score - a.score;
+    });
+
+    var primary = all[0] || { nums: [], votes: 0, score: 0, shape: 0 };
+    var alt = null;
+    for (var i = 1; i < all.length; i++) {
+      var diff = 0;
+      for (var j = 0; j < k; j++) if (primary.nums.indexOf(all[i].nums[j]) < 0) diff++;
+      if (diff >= (minDiff || 1)) { alt = all[i]; break; }
     }
 
-    var maxVotes = primary.length ? Math.max.apply(null, primary.map(function (n) {
-      for (var i = 0; i < sorted.length; i++) if (sorted[i].n === n) return sorted[i].votes;
-      return 0;
-    })) : 0;
-
     return {
-      primary: primary,
-      primaryVotes: totalVotesOf(sorted, primary),
-      primaryScore: totalScoreOf(sorted, primary),
-      alt: best ? best.nums : [],
-      altVotes: best ? best.votes : 0,
-      altScore: best ? best.score : 0,
+      primary: primary.nums,
+      primaryVotes: primary.votes,
+      primaryScore: primary.score,
+      primaryShape: primary.shape,
+      alt: alt ? alt.nums : [],
+      altVotes: alt ? alt.votes : 0,
+      altScore: alt ? alt.score : 0,
+      shapeFiltered: true,
     };
   }
 
@@ -270,8 +297,8 @@
     var mainEval = evaluate(ctx, "main", weights);
     var specEval = ctx.game.specialCount > 0 ? evaluate(ctx, "special", weights) : null;
 
-    var mainSets = pickSets(mainEval.sorted, ctx.game.mainCount, 14, 2);
-    var specSets = specEval ? pickSets(specEval.sorted, ctx.game.specialCount, 10, 1) : null;
+    var mainSets = pickSets(mainEval.sorted, ctx.game.mainCount, 20, 2, mainEval.area);
+    var specSets = specEval ? pickSets(specEval.sorted, ctx.game.specialCount, 12, 1, specEval.area) : null;
 
     var pickMain = mainSets.primary;
     var pickSpec = specSets ? specSets.primary : [];
@@ -327,6 +354,22 @@
         primaryScore: mainSets.primaryScore,
         alt: mainSets.alt,
         altVotes: mainSets.altVotes,
+        shapeFiltered: mainSets.shapeFiltered,
+        shape: (function () {
+          var nums = pickMain, sm = 0, odd = 0, co = 0;
+          for (var q = 0; q < nums.length; q++) {
+            sm += nums[q];
+            if (nums[q] % 2) odd++;
+            if (q && nums[q] - nums[q - 1] === 1) co++;
+          }
+          var sums = mainEval.area.sumSeries;
+          var mid = sums.length ? C.median(sums) : 0;
+          return {
+            sum: sm, odd: odd, even: nums.length - odd, consec: co,
+            mid: Math.round(mid),
+            shape: mainSets.primaryShape,
+          };
+        })(),
         sorted: mainEval.sorted,
         votes: mainEval.votes,
         models: mainEval.models,
