@@ -1,58 +1,53 @@
 {
  "version": 2,
- "updated": "2026-11-17T11:55:41.057Z",
+ "updated": "2026-11-17T20:11:52.823Z",
  "perGame": true,
  "games": {
   "ssq": {
    "weights": {
-    "ssq_t_hot30": 0.21,
-    "ssq_t_repeat": 1.96,
-    "ssq_t_neighbor": 1.57,
-    "ssq_t_diag": 13.95,
-    "ssq_t_zone": 2.33,
-    "ssq_t_span": 0.46,
-    "ssq_p_hyper": 12.3,
-    "ssq_p_binom": 0.37,
-    "ssq_p_poisson": 0.62,
-    "ssq_p_geom": 0.09,
-    "ssq_p_bayes": 0.1,
-    "ssq_p_cond": 0.13,
-    "ssq_p_expect": 11.66,
-    "ssq_p_multi": 0.13,
-    "ssq_p_negbinom": 2.94,
-    "ssq_p_ci": 0.08,
-    "ssq_s_chi": 1.27,
-    "ssq_s_entropy": 5.42,
-    "ssq_s_slope": 0.17,
-    "ssq_s_autocorr": 0.07,
-    "ssq_s_ks": 0.16,
-    "ssq_s_ci": 0.23,
-    "ssq_psy_birthday": 0.06,
-    "ssq_psy_taboo": 0.92,
-    "ssq_psy_hotband": 0.32,
-    "ssq_psy_gambler": 8.82,
-    "ssq_psy_anchor": 0.19,
-    "ssq_g_minority": 0.18,
-    "ssq_g_nash": 1.06,
-    "ssq_g_dominant": 0.74,
-    "ssq_g_anticipate": 9.57,
-    "ssq_g_signal": 0.16,
-    "ssq_g_auction": 18.19,
-    "ssq_g_evolution": 15.78,
-    "ssq_f_holt": 3.37,
-    "ssq_f_ar1": 0.1,
-    "ssq_f_kalman": 3.55,
-    "ssq_f_scenario": 5.84,
-    "ssq_f_changepoint": 0.11,
-    "ssq_f_montecarlo": 0.23,
-    "ssq_f_cycle": 1.2
+    "ssq_t_hot10": 7.78,
+    "ssq_t_hot30": 2.88,
+    "ssq_t_cold": 15.03,
+    "ssq_t_zone": 1.35,
+    "ssq_t_sumtrend": 0.11,
+    "ssq_t_consec": 0.93,
+    "ssq_t_span": 0.17,
+    "ssq_p_hyper": 5.81,
+    "ssq_p_binom": 16.5,
+    "ssq_p_poisson": 0.06,
+    "ssq_p_geom": 0.5,
+    "ssq_p_negbinom": 0.29,
+    "ssq_p_ci": 0.09,
+    "ssq_s_z": 4.9,
+    "ssq_s_slope": 0.11,
+    "ssq_s_rank": 0.46,
+    "ssq_s_ks": 2.91,
+    "ssq_psy_birthday": 1.27,
+    "ssq_psy_lucky": 1.14,
+    "ssq_psy_gambler": 0.81,
+    "ssq_psy_herd": 1.12,
+    "ssq_psy_round": 0.14,
+    "ssq_psy_symmetry": 3,
+    "ssq_g_crowd": 0.72,
+    "ssq_g_nash": 5.18,
+    "ssq_g_dominant": 1.86,
+    "ssq_g_pareto": 1.47,
+    "ssq_g_auction": 5.46,
+    "ssq_g_evolution": 11.58,
+    "ssq_f_holt": 2.36,
+    "ssq_f_kalman": 0.77,
+    "ssq_f_scenario": 0.09,
+    "ssq_f_changepoint": 0.08,
+    "ssq_f_scurve": 2.44,
+    "ssq_f_montecarlo": 1.53,
+    "ssq_f_grey": 0.36
    },
    "trainN": 100,
-   "baseHit": 1.06,
-   "trainHit": 1.36,
-   "changed": 41,
-   "trainedAt": "2026-11-17T11:55:45.112Z",
-   "basedOnIssue": "2026131",
+   "baseHit": 1.07,
+   "trainHit": 1.39,
+   "changed": 36,
+   "trainedAt": "2026-11-17T20:11:56.978Z",
+   "basedOnIssue": "2026132",
    "window": 100,
    "specialPick": [
     2
@@ -94,9 +89,9 @@
      "id": "hot20",
      "name": "最近20期最高频",
      "n": 100,
-     "any": 0.05,
-     "full": 0.05,
-     "score": 0.185
+     "any": 0.06,
+     "full": 0.06,
+     "score": 0.222
     },
     {
      "id": "cold",
@@ -107,8 +102,8 @@
      "score": 0.111
     }
    ],
-   "specialHit": 0.11,
-   "specialFull": 0.11,
+   "specialHit": 0.1,
+   "specialFull": 0.1,
    "specialBase": 0.063,
    "specialFullBase": 0.063,
    "history": [
@@ -124,6 +119,19 @@
      "mainChampionHit": 1.32,
      "specialChampion": "公式投票",
      "specialChampionAny": 0.08
+    },
+    {
+     "issue": "2026132",
+     "date": "2026-11-17",
+     "trainN": 100,
+     "baseHit": 1.07,
+     "trainHit": 1.39,
+     "changed": 36,
+     "trainedAt": "2026-11-17T20:11:56.978Z",
+     "mainChampion": "占优策略",
+     "mainChampionHit": 1.33,
+     "specialChampion": "公式投票",
+     "specialChampionAny": 0.08
     }
    ],
    "race": {
@@ -134,41 +142,41 @@
      "id": "ssq_g_dominant",
      "name": "占优策略",
      "school": "game",
-     "avg": 1.32
+     "avg": 1.33
     },
     "ranking": [
      {
       "id": "ssq_g_dominant",
       "name": "占优策略",
       "school": "game",
-      "avg": 1.32
-     },
-     {
-      "id": "ssq_f_scurve",
-      "name": "S 曲线拟合",
-      "school": "futures",
-      "avg": 1.29
+      "avg": 1.33
      },
      {
       "id": "ssq_g_anticipate",
       "name": "二阶预判",
       "school": "game",
-      "avg": 1.29
+      "avg": 1.3
      },
      {
       "id": "ssq_g_crowd",
       "name": "拥挤度反向",
       "school": "game",
-      "avg": 1.29
+      "avg": 1.3
      },
      {
       "id": "ssq_g_payoff",
       "name": "期望收益",
       "school": "game",
-      "avg": 1.29
+      "avg": 1.3
+     },
+     {
+      "id": "ssq_g_share",
+      "name": "奖池分摊",
+      "school": "game",
+      "avg": 1.3
      }
     ],
-    "worst": 0.92
+    "worst": 0.93
    }
   },
   "dlt": {
@@ -214,7 +222,7 @@
    "baseHit": 0.6,
    "trainHit": 0.95,
    "changed": 36,
-   "trainedAt": "2026-11-17T11:56:02.449Z",
+   "trainedAt": "2026-11-17T20:12:13.581Z",
    "basedOnIssue": "26131",
    "window": 100,
    "specialPick": [

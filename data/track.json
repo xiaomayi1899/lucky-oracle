@@ -1,9 +1,53 @@
 {
  "version": 1,
- "updated": "2026-11-17T11:56:11.412Z",
+ "updated": "2026-11-17T20:12:21.655Z",
  "games": {
   "ssq": {
    "records": [
+    {
+     "issue": "2026132",
+     "date": "2026-11-17",
+     "pick": [
+      4,
+      13,
+      14,
+      22,
+      24,
+      32
+     ],
+     "special": [
+      2
+     ],
+     "alt": [
+      4,
+      13,
+      14,
+      21,
+      24,
+      30
+     ],
+     "altSpecial": [
+      5
+     ],
+     "actualMain": [
+      5,
+      9,
+      13,
+      17,
+      18,
+      21
+     ],
+     "actualSpecial": [
+      11
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "2026-11-17T11:56:11.357Z",
+     "recordedAt": "2026-11-17T20:12:21.401Z",
+     "backfilled": false,
+     "prevHash": "fd26e69e91e87363",
+     "hash": "03b94b5a390bd466"
+    },
     {
      "issue": "2026131",
      "date": "2026-11-15",
@@ -1330,8 +1374,8 @@
      4,
      13,
      14,
-     22,
      24,
+     30,
      32
     ],
     "special": [
@@ -1339,25 +1383,25 @@
     ],
     "alt": [
      4,
-     13,
-     14,
-     21,
+     5,
+     18,
      24,
-     30
+     30,
+     32
     ],
     "altSpecial": [
-     5
+     7
     ],
     "votes": {},
     "models": 72,
     "clusters": 43,
-    "trainedOn": "2026131",
-    "forIssue": "2026132",
-    "basedOnIssue": "2026131",
-    "generatedAt": "2026-11-17T11:56:11.357Z"
+    "trainedOn": "2026132",
+    "forIssue": "2026133",
+    "basedOnIssue": "2026132",
+    "generatedAt": "2026-11-17T20:12:21.592Z"
    },
-   "lastHash": "fd26e69e91e87363",
-   "updated": "2026-11-17T11:56:11.357Z"
+   "lastHash": "03b94b5a390bd466",
+   "updated": "2026-11-17T20:12:21.592Z"
   },
   "dlt": {
    "records": [
@@ -2755,10 +2799,10 @@
     "trainedOn": "26131",
     "forIssue": "26132",
     "basedOnIssue": "26131",
-    "generatedAt": "2026-11-17T11:56:11.412Z"
+    "generatedAt": "2026-11-17T20:12:21.655Z"
    },
    "lastHash": "9a6005f63cdd79dc",
-   "updated": "2026-11-17T11:56:11.412Z"
+   "updated": "2026-11-17T20:12:21.655Z"
   }
  }
 }
