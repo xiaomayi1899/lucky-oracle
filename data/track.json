@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-18T10:28:51.165Z",
+ "updated": "2026-11-18T18:58:19.761Z",
  "games": {
   "ssq": {
    "records": [
@@ -1398,13 +1398,57 @@
     "trainedOn": "2026132",
     "forIssue": "2026133",
     "basedOnIssue": "2026132",
-    "generatedAt": "2026-11-18T10:28:51.114Z"
+    "generatedAt": "2026-11-18T18:58:19.717Z"
    },
    "lastHash": "03b94b5a390bd466",
-   "updated": "2026-11-18T10:28:51.115Z"
+   "updated": "2026-11-18T18:58:19.717Z"
   },
   "dlt": {
    "records": [
+    {
+     "issue": "26132",
+     "date": "2026-11-18",
+     "pick": [
+      2,
+      14,
+      18,
+      22,
+      33
+     ],
+     "special": [
+      7,
+      4
+     ],
+     "alt": [
+      2,
+      9,
+      18,
+      22,
+      30
+     ],
+     "altSpecial": [
+      5,
+      7
+     ],
+     "actualMain": [
+      2,
+      9,
+      16,
+      26,
+      35
+     ],
+     "actualSpecial": [
+      6,
+      11
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "2026-11-18T10:28:51.165Z",
+     "recordedAt": "2026-11-18T18:58:19.718Z",
+     "backfilled": false,
+     "prevHash": "9a6005f63cdd79dc",
+     "hash": "806449acd4b2a5b2"
+    },
     {
      "issue": "26131",
      "date": "2026-11-16",
@@ -2773,36 +2817,36 @@
    "pending": {
     "pick": [
      2,
-     14,
-     18,
-     22,
-     33
+     4,
+     17,
+     26,
+     31
     ],
     "special": [
-     7,
-     4
+     5,
+     1
     ],
     "alt": [
      2,
-     9,
-     18,
-     22,
+     4,
+     26,
+     29,
      30
     ],
     "altSpecial": [
-     5,
-     7
+     7,
+     10
     ],
     "votes": {},
     "models": 73,
     "clusters": 46,
-    "trainedOn": "26131",
-    "forIssue": "26132",
-    "basedOnIssue": "26131",
-    "generatedAt": "2026-11-18T10:28:51.165Z"
+    "trainedOn": "26132",
+    "forIssue": "26133",
+    "basedOnIssue": "26132",
+    "generatedAt": "2026-11-18T18:58:19.761Z"
    },
-   "lastHash": "9a6005f63cdd79dc",
-   "updated": "2026-11-18T10:28:51.165Z"
+   "lastHash": "806449acd4b2a5b2",
+   "updated": "2026-11-18T18:58:19.761Z"
   }
  }
 }

@@ -1,6 +1,6 @@
 {
  "version": 2,
- "updated": "2026-11-18T10:28:25.461Z",
+ "updated": "2026-11-18T18:57:58.309Z",
  "perGame": true,
  "games": {
   "ssq": {
@@ -46,7 +46,7 @@
    "baseHit": 1.07,
    "trainHit": 1.39,
    "changed": 36,
-   "trainedAt": "2026-11-18T10:28:29.107Z",
+   "trainedAt": "2026-11-18T18:58:01.474Z",
    "basedOnIssue": "2026132",
    "window": 100,
    "specialPick": [
@@ -219,19 +219,19 @@
     "dlt_f_grey": 17.38
    },
    "trainN": 100,
-   "baseHit": 0.6,
-   "trainHit": 0.95,
+   "baseHit": 0.61,
+   "trainHit": 0.97,
    "changed": 36,
-   "trainedAt": "2026-11-18T10:28:43.997Z",
-   "basedOnIssue": "26131",
+   "trainedAt": "2026-11-18T18:58:13.649Z",
+   "basedOnIssue": "26132",
    "window": 100,
    "specialPick": [
-    7,
-    4
+    5,
+    1
    ],
    "specialChampion": {
-    "id": "formula",
-    "name": "公式投票",
+    "id": "cold",
+    "name": "遗漏最长（冷号回补）",
     "n": 100,
     "any": 0.32,
     "full": 0.01,
@@ -239,28 +239,20 @@
    },
    "specialRanking": [
     {
-     "id": "formula",
-     "name": "公式投票",
+     "id": "cold",
+     "name": "遗漏最长（冷号回补）",
      "n": 100,
      "any": 0.32,
      "full": 0.01,
      "score": 0.254
     },
     {
-     "id": "cold",
-     "name": "遗漏最长（冷号回补）",
+     "id": "formula",
+     "name": "公式投票",
      "n": 100,
      "any": 0.31,
      "full": 0.01,
      "score": 0.247
-    },
-    {
-     "id": "hot20",
-     "name": "最近20期最高频",
-     "n": 100,
-     "any": 0.27,
-     "full": 0.01,
-     "score": 0.21899999999999997
     },
     {
      "id": "hot100",
@@ -271,16 +263,24 @@
      "score": 0.21
     },
     {
+     "id": "hot20",
+     "name": "最近20期最高频",
+     "n": 100,
+     "any": 0.26,
+     "full": 0,
+     "score": 0.182
+    },
+    {
      "id": "hot50",
      "name": "最近50期最高频",
      "n": 100,
-     "any": 0.23,
+     "any": 0.22,
      "full": 0,
-     "score": 0.16099999999999998
+     "score": 0.154
     }
    ],
-   "specialHit": 0.37,
-   "specialFull": 0.04,
+   "specialHit": 0.24,
+   "specialFull": 0.03,
    "specialBase": 0.318,
    "specialFullBase": 0.015,
    "history": [
@@ -309,6 +309,19 @@
      "mainChampionHit": 0.83,
      "specialChampion": "公式投票",
      "specialChampionAny": 0.32
+    },
+    {
+     "issue": "26132",
+     "date": "2026-11-18",
+     "trainN": 100,
+     "baseHit": 0.61,
+     "trainHit": 0.97,
+     "changed": 36,
+     "trainedAt": "2026-11-18T18:58:13.648Z",
+     "mainChampion": "训练权重投票",
+     "mainChampionHit": 0.83,
+     "specialChampion": "遗漏最长（冷号回补）",
+     "specialChampionAny": 0.32
     }
    ],
    "race": {
@@ -332,28 +345,28 @@
       "id": "dlt_f_grey",
       "name": "灰色预测 GM(1,1)",
       "school": "futures",
-      "avg": 0.82
+      "avg": 0.83
      },
      {
-      "id": "dlt_g_pareto",
-      "name": "帕累托组合",
-      "school": "game",
+      "id": "dlt_p_geom",
+      "name": "几何回补",
+      "school": "probability",
       "avg": 0.78
      },
      {
-      "id": "dlt_psy_anchor",
-      "name": "锚定效应",
-      "school": "psychology",
+      "id": "dlt_p_multi",
+      "name": "多项分布似然",
+      "school": "probability",
       "avg": 0.78
      },
      {
-      "id": "dlt_psy_herd",
-      "name": "从众效应",
-      "school": "psychology",
+      "id": "dlt_p_negbinom",
+      "name": "负二项等待",
+      "school": "probability",
       "avg": 0.78
      }
     ],
-    "worst": 0.53
+    "worst": 0.54
    }
   }
  }
