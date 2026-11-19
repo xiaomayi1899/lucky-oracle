@@ -1,9 +1,53 @@
 {
  "version": 1,
- "updated": "2026-11-19T08:09:37.239Z",
+ "updated": "2026-11-19T17:20:46.516Z",
  "games": {
   "ssq": {
    "records": [
+    {
+     "issue": "2026133",
+     "date": "2026-11-19",
+     "pick": [
+      4,
+      13,
+      14,
+      24,
+      30,
+      32
+     ],
+     "special": [
+      2
+     ],
+     "alt": [
+      4,
+      5,
+      18,
+      24,
+      30,
+      32
+     ],
+     "altSpecial": [
+      7
+     ],
+     "actualMain": [
+      7,
+      10,
+      11,
+      14,
+      21,
+      26
+     ],
+     "actualSpecial": [
+      13
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "2026-11-19T08:09:37.192Z",
+     "recordedAt": "2026-11-19T17:20:46.267Z",
+     "backfilled": false,
+     "prevHash": "03b94b5a390bd466",
+     "hash": "90e154a681dd5663"
+    },
     {
      "issue": "2026132",
      "date": "2026-11-17",
@@ -1382,12 +1426,12 @@
      2
     ],
     "alt": [
-     4,
      5,
-     18,
+     8,
+     10,
      24,
-     30,
-     32
+     32,
+     33
     ],
     "altSpecial": [
      7
@@ -1395,13 +1439,13 @@
     "votes": {},
     "models": 72,
     "clusters": 43,
-    "trainedOn": "2026132",
-    "forIssue": "2026133",
-    "basedOnIssue": "2026132",
-    "generatedAt": "2026-11-19T08:09:37.192Z"
+    "trainedOn": "2026133",
+    "forIssue": "2026134",
+    "basedOnIssue": "2026133",
+    "generatedAt": "2026-11-19T17:20:46.453Z"
    },
-   "lastHash": "03b94b5a390bd466",
-   "updated": "2026-11-19T08:09:37.192Z"
+   "lastHash": "90e154a681dd5663",
+   "updated": "2026-11-19T17:20:46.453Z"
   },
   "dlt": {
    "records": [
@@ -2843,10 +2887,10 @@
     "trainedOn": "26132",
     "forIssue": "26133",
     "basedOnIssue": "26132",
-    "generatedAt": "2026-11-19T08:09:37.239Z"
+    "generatedAt": "2026-11-19T17:20:46.516Z"
    },
    "lastHash": "806449acd4b2a5b2",
-   "updated": "2026-11-19T08:09:37.239Z"
+   "updated": "2026-11-19T17:20:46.516Z"
   }
  }
 }

@@ -1,6 +1,6 @@
 {
  "version": 2,
- "updated": "2026-11-19T08:09:16.112Z",
+ "updated": "2026-11-19T17:20:16.023Z",
  "perGame": true,
  "games": {
   "ssq": {
@@ -43,11 +43,11 @@
     "ssq_f_grey": 0.36
    },
    "trainN": 100,
-   "baseHit": 1.07,
-   "trainHit": 1.39,
+   "baseHit": 1.05,
+   "trainHit": 1.37,
    "changed": 36,
-   "trainedAt": "2026-11-19T08:09:19.285Z",
-   "basedOnIssue": "2026132",
+   "trainedAt": "2026-11-19T17:20:20.866Z",
+   "basedOnIssue": "2026133",
    "window": 100,
    "specialPick": [
     2
@@ -97,9 +97,9 @@
      "id": "cold",
      "name": "遗漏最长（冷号回补）",
      "n": 100,
-     "any": 0.03,
-     "full": 0.03,
-     "score": 0.111
+     "any": 0.04,
+     "full": 0.04,
+     "score": 0.14800000000000002
     }
    ],
    "specialHit": 0.1,
@@ -128,6 +128,19 @@
      "trainHit": 1.39,
      "changed": 36,
      "trainedAt": "2026-11-17T20:11:56.978Z",
+     "mainChampion": "占优策略",
+     "mainChampionHit": 1.33,
+     "specialChampion": "公式投票",
+     "specialChampionAny": 0.08
+    },
+    {
+     "issue": "2026133",
+     "date": "2026-11-19",
+     "trainN": 100,
+     "baseHit": 1.05,
+     "trainHit": 1.37,
+     "changed": 36,
+     "trainedAt": "2026-11-19T17:20:20.866Z",
      "mainChampion": "占优策略",
      "mainChampionHit": 1.33,
      "specialChampion": "公式投票",
@@ -222,7 +235,7 @@
    "baseHit": 0.61,
    "trainHit": 0.97,
    "changed": 36,
-   "trainedAt": "2026-11-19T08:09:31.334Z",
+   "trainedAt": "2026-11-19T17:20:37.768Z",
    "basedOnIssue": "26132",
    "window": 100,
    "specialPick": [
