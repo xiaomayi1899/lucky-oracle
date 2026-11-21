@@ -1,6 +1,6 @@
 {
  "version": 2,
- "updated": "2026-11-21T08:57:09.008Z",
+ "updated": "2026-11-21T16:31:30.977Z",
  "perGame": true,
  "games": {
   "ssq": {
@@ -46,7 +46,7 @@
    "baseHit": 1.05,
    "trainHit": 1.37,
    "changed": 36,
-   "trainedAt": "2026-11-21T08:57:12.142Z",
+   "trainedAt": "2026-11-21T16:31:35.829Z",
    "basedOnIssue": "2026133",
    "window": 100,
    "specialPick": [
@@ -233,18 +233,18 @@
    },
    "trainN": 100,
    "baseHit": 0.61,
-   "trainHit": 0.97,
+   "trainHit": 0.96,
    "changed": 36,
-   "trainedAt": "2026-11-21T08:57:24.598Z",
-   "basedOnIssue": "26132",
+   "trainedAt": "2026-11-21T16:31:53.912Z",
+   "basedOnIssue": "26133",
    "window": 100,
    "specialPick": [
-    5,
-    1
+    9,
+    7
    ],
    "specialChampion": {
-    "id": "cold",
-    "name": "遗漏最长（冷号回补）",
+    "id": "formula",
+    "name": "公式投票",
     "n": 100,
     "any": 0.32,
     "full": 0.01,
@@ -252,16 +252,16 @@
    },
    "specialRanking": [
     {
-     "id": "cold",
-     "name": "遗漏最长（冷号回补）",
+     "id": "formula",
+     "name": "公式投票",
      "n": 100,
      "any": 0.32,
      "full": 0.01,
      "score": 0.254
     },
     {
-     "id": "formula",
-     "name": "公式投票",
+     "id": "cold",
+     "name": "遗漏最长（冷号回补）",
      "n": 100,
      "any": 0.31,
      "full": 0.01,
@@ -271,9 +271,9 @@
      "id": "hot100",
      "name": "最近100期最高频",
      "n": 100,
-     "any": 0.3,
+     "any": 0.29,
      "full": 0,
-     "score": 0.21
+     "score": 0.20299999999999996
     },
     {
      "id": "hot20",
@@ -287,12 +287,12 @@
      "id": "hot50",
      "name": "最近50期最高频",
      "n": 100,
-     "any": 0.22,
+     "any": 0.23,
      "full": 0,
-     "score": 0.154
+     "score": 0.16099999999999998
     }
    ],
-   "specialHit": 0.24,
+   "specialHit": 0.39,
    "specialFull": 0.03,
    "specialBase": 0.318,
    "specialFullBase": 0.015,
@@ -335,6 +335,19 @@
      "mainChampionHit": 0.83,
      "specialChampion": "遗漏最长（冷号回补）",
      "specialChampionAny": 0.32
+    },
+    {
+     "issue": "26133",
+     "date": "2026-11-21",
+     "trainN": 100,
+     "baseHit": 0.61,
+     "trainHit": 0.96,
+     "changed": 36,
+     "trainedAt": "2026-11-21T16:31:53.911Z",
+     "mainChampion": "训练权重投票",
+     "mainChampionHit": 0.82,
+     "specialChampion": "公式投票",
+     "specialChampionAny": 0.32
     }
    ],
    "race": {
@@ -345,20 +358,20 @@
      "id": "__weights__",
      "name": "训练权重投票",
      "school": "ensemble",
-     "avg": 0.83
+     "avg": 0.82
     },
     "ranking": [
      {
       "id": "__weights__",
       "name": "训练权重投票",
       "school": "ensemble",
-      "avg": 0.83
+      "avg": 0.82
      },
      {
       "id": "dlt_f_grey",
       "name": "灰色预测 GM(1,1)",
       "school": "futures",
-      "avg": 0.83
+      "avg": 0.82
      },
      {
       "id": "dlt_p_geom",
