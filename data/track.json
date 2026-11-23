@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-23T11:15:13.129Z",
+ "updated": "2026-11-23T22:40:27.784Z",
  "games": {
   "ssq": {
    "records": [
@@ -1486,13 +1486,57 @@
     "trainedOn": "2026134",
     "forIssue": "2026135",
     "basedOnIssue": "2026134",
-    "generatedAt": "2026-11-23T11:15:13.071Z"
+    "generatedAt": "2026-11-23T22:40:27.742Z"
    },
    "lastHash": "cc48fd5aaf897aa8",
-   "updated": "2026-11-23T11:15:13.072Z"
+   "updated": "2026-11-23T22:40:27.742Z"
   },
   "dlt": {
    "records": [
+    {
+     "issue": "26134",
+     "date": "2026-11-23",
+     "pick": [
+      2,
+      10,
+      15,
+      31,
+      32
+     ],
+     "special": [
+      9,
+      7
+     ],
+     "alt": [
+      2,
+      10,
+      17,
+      19,
+      32
+     ],
+     "altSpecial": [
+      7,
+      9
+     ],
+     "actualMain": [
+      4,
+      15,
+      17,
+      24,
+      31
+     ],
+     "actualSpecial": [
+      6,
+      9
+     ],
+     "mainHit": 2,
+     "specialHit": 1,
+     "generatedAt": "2026-11-23T11:15:13.129Z",
+     "recordedAt": "2026-11-23T22:40:27.742Z",
+     "backfilled": false,
+     "prevHash": "30cbb5560ffd5b81",
+     "hash": "216c0be94b3a342c"
+    },
     {
      "issue": "26133",
      "date": "2026-11-21",
@@ -2948,21 +2992,21 @@
    ],
    "pending": {
     "pick": [
-     2,
-     10,
+     5,
+     14,
      15,
-     31,
-     32
+     24,
+     25
     ],
     "special": [
      9,
      7
     ],
     "alt": [
-     2,
-     10,
-     17,
-     19,
+     3,
+     14,
+     15,
+     25,
      32
     ],
     "altSpecial": [
@@ -2972,13 +3016,13 @@
     "votes": {},
     "models": 73,
     "clusters": 46,
-    "trainedOn": "26133",
-    "forIssue": "26134",
-    "basedOnIssue": "26133",
-    "generatedAt": "2026-11-23T11:15:13.129Z"
+    "trainedOn": "26134",
+    "forIssue": "26135",
+    "basedOnIssue": "26134",
+    "generatedAt": "2026-11-23T22:40:27.784Z"
    },
-   "lastHash": "30cbb5560ffd5b81",
-   "updated": "2026-11-23T11:15:13.129Z"
+   "lastHash": "216c0be94b3a342c",
+   "updated": "2026-11-23T22:40:27.784Z"
   }
  }
 }

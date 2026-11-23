@@ -1,6 +1,6 @@
 {
  "version": 2,
- "updated": "2026-11-23T11:14:42.776Z",
+ "updated": "2026-11-23T22:40:04.868Z",
  "perGame": true,
  "games": {
   "ssq": {
@@ -49,7 +49,7 @@
    "baseHit": 1.05,
    "trainHit": 1.37,
    "changed": 39,
-   "trainedAt": "2026-11-23T11:14:47.617Z",
+   "trainedAt": "2026-11-23T22:40:08.430Z",
    "basedOnIssue": "2026134",
    "window": 100,
    "specialPick": [
@@ -248,11 +248,11 @@
     "dlt_f_grey": 17.38
    },
    "trainN": 100,
-   "baseHit": 0.61,
+   "baseHit": 0.62,
    "trainHit": 0.96,
    "changed": 36,
-   "trainedAt": "2026-11-23T11:15:04.436Z",
-   "basedOnIssue": "26133",
+   "trainedAt": "2026-11-23T22:40:21.097Z",
+   "basedOnIssue": "26134",
    "window": 100,
    "specialPick": [
     9,
@@ -262,18 +262,18 @@
     "id": "formula",
     "name": "公式投票",
     "n": 100,
-    "any": 0.32,
+    "any": 0.33,
     "full": 0.01,
-    "score": 0.254
+    "score": 0.26099999999999995
    },
    "specialRanking": [
     {
      "id": "formula",
      "name": "公式投票",
      "n": 100,
-     "any": 0.32,
+     "any": 0.33,
      "full": 0.01,
-     "score": 0.254
+     "score": 0.26099999999999995
     },
     {
      "id": "cold",
@@ -287,28 +287,28 @@
      "id": "hot100",
      "name": "最近100期最高频",
      "n": 100,
-     "any": 0.29,
+     "any": 0.3,
      "full": 0,
-     "score": 0.20299999999999996
+     "score": 0.21
     },
     {
      "id": "hot20",
      "name": "最近20期最高频",
      "n": 100,
-     "any": 0.26,
+     "any": 0.27,
      "full": 0,
-     "score": 0.182
+     "score": 0.18899999999999997
     },
     {
      "id": "hot50",
      "name": "最近50期最高频",
      "n": 100,
-     "any": 0.23,
+     "any": 0.24,
      "full": 0,
-     "score": 0.16099999999999998
+     "score": 0.16799999999999998
     }
    ],
-   "specialHit": 0.39,
+   "specialHit": 0.4,
    "specialFull": 0.03,
    "specialBase": 0.318,
    "specialFullBase": 0.015,
@@ -364,6 +364,19 @@
      "mainChampionHit": 0.82,
      "specialChampion": "公式投票",
      "specialChampionAny": 0.32
+    },
+    {
+     "issue": "26134",
+     "date": "2026-11-23",
+     "trainN": 100,
+     "baseHit": 0.62,
+     "trainHit": 0.96,
+     "changed": 36,
+     "trainedAt": "2026-11-23T22:40:21.096Z",
+     "mainChampion": "训练权重投票",
+     "mainChampionHit": 0.83,
+     "specialChampion": "公式投票",
+     "specialChampionAny": 0.33
     }
    ],
    "race": {
@@ -374,38 +387,38 @@
      "id": "__weights__",
      "name": "训练权重投票",
      "school": "ensemble",
-     "avg": 0.82
+     "avg": 0.83
     },
     "ranking": [
      {
       "id": "__weights__",
       "name": "训练权重投票",
       "school": "ensemble",
-      "avg": 0.82
+      "avg": 0.83
      },
      {
       "id": "dlt_f_grey",
       "name": "灰色预测 GM(1,1)",
       "school": "futures",
-      "avg": 0.82
-     },
-     {
-      "id": "dlt_p_geom",
-      "name": "几何回补",
-      "school": "probability",
-      "avg": 0.78
+      "avg": 0.81
      },
      {
       "id": "dlt_p_multi",
       "name": "多项分布似然",
       "school": "probability",
-      "avg": 0.78
+      "avg": 0.79
      },
      {
       "id": "dlt_p_negbinom",
       "name": "负二项等待",
       "school": "probability",
-      "avg": 0.78
+      "avg": 0.79
+     },
+     {
+      "id": "dlt_s_ci",
+      "name": "频率置信区间",
+      "school": "statistics",
+      "avg": 0.79
      }
     ],
     "worst": 0.54
