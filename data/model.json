@@ -1,6 +1,6 @@
 {
  "version": 2,
- "updated": "2026-11-25T10:52:09.360Z",
+ "updated": "2026-11-25T20:18:54.447Z",
  "perGame": true,
  "games": {
   "ssq": {
@@ -49,7 +49,7 @@
    "baseHit": 1.06,
    "trainHit": 1.35,
    "changed": 39,
-   "trainedAt": "2026-11-25T10:52:12.940Z",
+   "trainedAt": "2026-11-25T20:18:57.577Z",
    "basedOnIssue": "2026135",
    "window": 100,
    "specialPick": [
@@ -261,15 +261,15 @@
     "dlt_f_grey": 17.38
    },
    "trainN": 100,
-   "baseHit": 0.62,
-   "trainHit": 0.96,
+   "baseHit": 0.61,
+   "trainHit": 0.95,
    "changed": 36,
-   "trainedAt": "2026-11-25T10:52:25.863Z",
-   "basedOnIssue": "26134",
+   "trainedAt": "2026-11-25T20:19:09.619Z",
+   "basedOnIssue": "26135",
    "window": 100,
    "specialPick": [
     9,
-    7
+    4
    ],
    "specialChampion": {
     "id": "formula",
@@ -308,21 +308,21 @@
      "id": "hot20",
      "name": "最近20期最高频",
      "n": 100,
-     "any": 0.27,
+     "any": 0.26,
      "full": 0,
-     "score": 0.18899999999999997
+     "score": 0.182
     },
     {
      "id": "hot50",
      "name": "最近50期最高频",
      "n": 100,
-     "any": 0.24,
+     "any": 0.25,
      "full": 0,
-     "score": 0.16799999999999998
+     "score": 0.175
     }
    ],
-   "specialHit": 0.4,
-   "specialFull": 0.03,
+   "specialHit": 0.43,
+   "specialFull": 0,
    "specialBase": 0.318,
    "specialFullBase": 0.015,
    "history": [
@@ -390,6 +390,19 @@
      "mainChampionHit": 0.83,
      "specialChampion": "公式投票",
      "specialChampionAny": 0.33
+    },
+    {
+     "issue": "26135",
+     "date": "2026-11-25",
+     "trainN": 100,
+     "baseHit": 0.61,
+     "trainHit": 0.95,
+     "changed": 36,
+     "trainedAt": "2026-11-25T20:19:09.618Z",
+     "mainChampion": "训练权重投票",
+     "mainChampionHit": 0.83,
+     "specialChampion": "公式投票",
+     "specialChampionAny": 0.33
     }
    ],
    "race": {
@@ -413,7 +426,13 @@
       "id": "dlt_f_grey",
       "name": "灰色预测 GM(1,1)",
       "school": "futures",
-      "avg": 0.81
+      "avg": 0.82
+     },
+     {
+      "id": "dlt_g_pareto",
+      "name": "帕累托组合",
+      "school": "game",
+      "avg": 0.79
      },
      {
       "id": "dlt_p_multi",
@@ -426,15 +445,9 @@
       "name": "负二项等待",
       "school": "probability",
       "avg": 0.79
-     },
-     {
-      "id": "dlt_s_ci",
-      "name": "频率置信区间",
-      "school": "statistics",
-      "avg": 0.79
      }
     ],
-    "worst": 0.54
+    "worst": 0.52
    }
   }
  }
