@@ -1,9 +1,53 @@
 {
  "version": 1,
- "updated": "2026-11-26T11:40:40.090Z",
+ "updated": "2026-11-26T20:32:32.681Z",
  "games": {
   "ssq": {
    "records": [
+    {
+     "issue": "2026136",
+     "date": "2026-11-26",
+     "pick": [
+      4,
+      13,
+      14,
+      24,
+      32,
+      33
+     ],
+     "special": [
+      8
+     ],
+     "alt": [
+      6,
+      9,
+      13,
+      16,
+      24,
+      32
+     ],
+     "altSpecial": [
+      11
+     ],
+     "actualMain": [
+      9,
+      11,
+      22,
+      27,
+      30,
+      33
+     ],
+     "actualSpecial": [
+      5
+     ],
+     "mainHit": 1,
+     "specialHit": 0,
+     "generatedAt": "2026-11-26T11:40:40.036Z",
+     "recordedAt": "2026-11-26T20:32:32.473Z",
+     "backfilled": false,
+     "prevHash": "63a8bb5b278d6c12",
+     "hash": "716a9671e7371202"
+    },
     {
      "issue": "2026135",
      "date": "2026-11-24",
@@ -1506,34 +1550,34 @@
      4,
      13,
      14,
-     24,
-     32,
-     33
-    ],
-    "special": [
-     8
-    ],
-    "alt": [
-     6,
-     9,
-     13,
-     16,
+     17,
      24,
      32
     ],
+    "special": [
+     1
+    ],
+    "alt": [
+     4,
+     13,
+     15,
+     23,
+     24,
+     30
+    ],
     "altSpecial": [
-     11
+     8
     ],
     "votes": {},
     "models": 72,
     "clusters": 43,
-    "trainedOn": "2026135",
-    "forIssue": "2026136",
-    "basedOnIssue": "2026135",
-    "generatedAt": "2026-11-26T11:40:40.036Z"
+    "trainedOn": "2026136",
+    "forIssue": "2026137",
+    "basedOnIssue": "2026136",
+    "generatedAt": "2026-11-26T20:32:32.636Z"
    },
-   "lastHash": "63a8bb5b278d6c12",
-   "updated": "2026-11-26T11:40:40.036Z"
+   "lastHash": "716a9671e7371202",
+   "updated": "2026-11-26T20:32:32.636Z"
   },
   "dlt": {
    "records": [
@@ -3107,10 +3151,10 @@
     "trainedOn": "26135",
     "forIssue": "26136",
     "basedOnIssue": "26135",
-    "generatedAt": "2026-11-26T11:40:40.090Z"
+    "generatedAt": "2026-11-26T20:32:32.681Z"
    },
    "lastHash": "6f7f3e1f124c8ea2",
-   "updated": "2026-11-26T11:40:40.090Z"
+   "updated": "2026-11-26T20:32:32.681Z"
   }
  }
 }
