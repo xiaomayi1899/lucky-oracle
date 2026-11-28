@@ -1,6 +1,6 @@
 {
  "version": 2,
- "updated": "2026-11-27T21:30:13.954Z",
+ "updated": "2026-11-28T03:27:42.702Z",
  "perGame": true,
  "games": {
   "ssq": {
@@ -51,7 +51,7 @@
    "baseHit": 1.06,
    "trainHit": 1.35,
    "changed": 41,
-   "trainedAt": "2026-11-27T21:30:16.410Z",
+   "trainedAt": "2026-11-28T03:27:45.124Z",
    "basedOnIssue": "2026136",
    "window": 100,
    "specialPick": [
@@ -279,7 +279,7 @@
    "baseHit": 0.61,
    "trainHit": 0.95,
    "changed": 36,
-   "trainedAt": "2026-11-27T21:30:26.588Z",
+   "trainedAt": "2026-11-28T03:27:54.538Z",
    "basedOnIssue": "26135",
    "window": 100,
    "specialPick": [
